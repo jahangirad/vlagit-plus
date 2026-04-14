@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vlagit_plus/app/global_widgets/appbar_widget.dart';
+import '../../../global_widgets/button_widget.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/preview_controller.dart';
 
 class PreviewView extends GetView<PreviewController> {
@@ -10,6 +13,21 @@ class PreviewView extends GetView<PreviewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: CustomAppBar(
+          title: "Vlagit Plus",
+        leading: IconButton(
+            onPressed: (){
+              Get.toNamed(Routes.NEARBY);
+            },
+            icon: Icon(Icons.visibility_outlined, color: Color(0xFFc799ff), size: 22.sp)
+        ),
+        actionIcon: IconButton(
+            onPressed: (){
+              Get.toNamed(Routes.PROFILE);
+            },
+            icon: Icon(Icons.account_circle_outlined, color: Color(0xFFb9b6bb), size: 22.sp)
+        ),
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -29,8 +47,7 @@ class PreviewView extends GetView<PreviewController> {
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              SizedBox(height: 100.h), // অ্যাপবার বা ট্যাবের জন্য গ্যাপ
-
+              SizedBox(height: 20.h),
               Text(
                 "DIGITAL PASS",
                 style: TextStyle(
@@ -189,21 +206,27 @@ class PreviewView extends GetView<PreviewController> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildBottomButton(
+                      child: CustomButton(
+                        text: "Share Info",
+                        height: 50.h,
                         icon: Icons.share_outlined,
-                        label: "Share Profile",
-                        color: const Color(0xFFC3A0FF), // ছবির সেই হালকা বেগুনি
-                        textColor: Colors.black,
+                        color: const Color(0xFFC3A0FF),
+                        onPressed: () {
+                          Get.toNamed(Routes.NEARBY);
+                        },
                       ),
                     ),
                     SizedBox(width: 15.w),
                     Expanded(
-                      child: _buildBottomButton(
+                      child: CustomButton(
+                        text: "Scan QR",
+                        height: 50.h,
                         icon: Icons.qr_code_scanner,
-                        label: "Scan QR",
                         color: const Color(0xFF111111),
                         textColor: Colors.white,
-                        hasBorder: true,
+                        onPressed: () {
+                          // Scan QR action
+                        },
                       ),
                     ),
                   ],
