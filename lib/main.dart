@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       builder: (_, child){
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: "Application",
+          title: "Vlagit Plus",
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
           defaultTransition: Transition.cupertino,

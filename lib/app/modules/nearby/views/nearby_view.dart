@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:vlagit_plus/app/global_widgets/appbar_widget.dart';
+import '../../../global_widgets/bottom_sheet_widget.dart';
 import '../../../global_widgets/button_widget.dart';
 import '../controllers/nearby_controller.dart';
 
@@ -162,9 +163,11 @@ class NearbyView extends GetView<NearbyController> {
               text: "SEND",
               icon: Icons.play_arrow,
               height: 42.h,
-              width: 110.w,
+              width: 120.w,
               color: const Color(0xFFC3A0FF),
-              onPressed: () {},
+              onPressed: () {
+                CustomBottomSheet.showUnlockProfile();
+              },
             ),
           ],
         ),
