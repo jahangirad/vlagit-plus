@@ -13,15 +13,6 @@ class EditProfileView extends GetView<EditProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(
-        title: "Profile Create",
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back_ios,
-                color: const Color(0xFFc799ff), size: 22.sp)),
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -43,7 +34,7 @@ class EditProfileView extends GetView<EditProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Avatar Section
+                SizedBox(height: 70.h),
                 Center(
                   child: Column(
                     children: [
@@ -94,26 +85,16 @@ class EditProfileView extends GetView<EditProfileController> {
                 SizedBox(height: 20.h),
 
                 // Form Fields
-                _buildLabel("DISPLAY NAME"),
+                _buildLabel("Full Name"),
                 _buildTextField("Elena Vance"),
 
-                _buildLabel("TITLE / PROFESSION"),
+                _buildLabel("Tittle"),
                 _buildTextField("e.g. Digital Architect"),
 
-                _buildLabel("STATUS NOTE"),
+                _buildLabel("Note"),
                 _buildTextField("Tell the world what you're up to...",
                     maxLines: 3),
 
-                SizedBox(height: 25.h),
-                Text(
-                  "QR DATA",
-                  style: TextStyle(
-                    color: const Color(0xFFc799ff),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13.sp,
-                    letterSpacing: 1.2,
-                  ),
-                ),
                 SizedBox(height: 15.h),
 
                 // Switch List Tiles
@@ -121,55 +102,8 @@ class EditProfileView extends GetView<EditProfileController> {
                 _buildSwitchField("WEBSITE URL", "www.elenavance.design", true),
                 _buildSwitchField("PHONE NUMBER", "+1 (555) 000-0000", false),
                 _buildSwitchField("SOCIAL MEDIA", "@elenavance_creative", true),
+                _buildSwitchField("SOCIAL MEDIA", "@elenavance_creative", true),
 
-                // Location Visibility Card
-                Container(
-                  margin: EdgeInsets.only(top: 10.h),
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D0D0D).withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(15.r),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20.r,
-                        backgroundColor: const Color(0xFF1A1A1A),
-                        child: Icon(Icons.location_on,
-                            color: const Color(0xFF4DB6AC), size: 20.sp),
-                      ),
-                      SizedBox(width: 15.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Location Visibility",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp),
-                            ),
-                            Text(
-                              "Allow others to see your city",
-                              style: TextStyle(
-                                  color: Colors.white38, fontSize: 12.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Transform.scale(
-                        scale: 0.8,
-                        child: Switch(
-                          value: true,
-                          onChanged: (v) {},
-                          activeColor: const Color(0xFF4DB6AC),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
                 SizedBox(height: 40.h),
 
@@ -178,7 +112,7 @@ class EditProfileView extends GetView<EditProfileController> {
                   text: "SAVE CHANGES",
                   onPressed: () {},
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 50.h),
               ],
             ),
           ),

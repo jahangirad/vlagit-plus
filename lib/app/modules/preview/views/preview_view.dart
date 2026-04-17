@@ -13,21 +13,6 @@ class PreviewView extends GetView<PreviewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(
-          title: "Vlagit Plus",
-        leading: IconButton(
-            onPressed: (){
-              Get.toNamed(Routes.NEARBY);
-            },
-            icon: Icon(Icons.visibility_outlined, color: Color(0xFFc799ff), size: 22.sp)
-        ),
-        actionIcon: IconButton(
-            onPressed: (){
-              Get.toNamed(Routes.PROFILE);
-            },
-            icon: Icon(Icons.account_circle_outlined, color: Color(0xFFb9b6bb), size: 22.sp)
-        ),
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -47,28 +32,8 @@ class PreviewView extends GetView<PreviewController> {
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              SizedBox(height: 20.h),
-              Text(
-                "DIGITAL PASS",
-                style: TextStyle(
-                  color: const Color(0xFF00E5FF), // ছবির মতো সায়ান কালার
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.5,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                "Your Identity",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 38.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -1,
-                ),
-              ),
 
-              SizedBox(height: 40.h),
+              SizedBox(height: 80.h),
 
               // মূল আইডেন্টিটি কার্ড (ছবির মতো গ্রেডিয়েন্ট সহ)
               Container(
@@ -183,101 +148,15 @@ class PreviewView extends GetView<PreviewController> {
                         fit: BoxFit.contain,
                       ),
                     ),
-
-                    SizedBox(height: 30.h),
-
-                    Text(
-                      "ID: 8829-X01-PREVIEW",
-                      style: TextStyle(
-                        color: Colors.white24,
-                        fontSize: 11.sp,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+                    SizedBox(height: 10.h),
                   ],
                 ),
               ),
 
-              SizedBox(height: 40.h),
-
-              // নিচের বাটনগুলো
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        text: "Share Info",
-                        height: 50.h,
-                        icon: Icons.share_outlined,
-                        color: const Color(0xFFC3A0FF),
-                        onPressed: () {
-                          Get.toNamed(Routes.NEARBY);
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 15.w),
-                    Expanded(
-                      child: CustomButton(
-                        text: "Scan QR",
-                        height: 50.h,
-                        icon: Icons.qr_code_scanner,
-                        color: const Color(0xFF111111),
-                        textColor: Colors.white,
-                        onPressed: () {
-                          // Scan QR action
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 50.h),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // বাটন তৈরির হেল্পার মেথড
-  Widget _buildBottomButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required Color textColor,
-    bool hasBorder = false,
-  }) {
-    return Container(
-      height: 65.h,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(35.r),
-        border: hasBorder ? Border.all(color: Colors.white.withOpacity(0.1), width: 1.5) : null,
-        boxShadow: !hasBorder
-            ? [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          )
-        ]
-            : [],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: textColor, size: 22.sp),
-          SizedBox(width: 10.w),
-          Text(
-            label,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-            ),
-          ),
-        ],
       ),
     );
   }

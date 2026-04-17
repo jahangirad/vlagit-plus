@@ -12,15 +12,6 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(
-        title: "Settings",
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back_ios,
-                color: const Color(0xFFc799ff), size: 22.sp)),
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,

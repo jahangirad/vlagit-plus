@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
+import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/views/home_view.dart';
 import '../modules/nearby/bindings/nearby_binding.dart';
 import '../modules/nearby/views/nearby_view.dart';
 import '../modules/preview/bindings/preview_binding.dart';
@@ -10,13 +12,15 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/qr_code/bindings/qr_code_binding.dart';
 import '../modules/qr_code/views/qr_code_view.dart';
+import '../modules/receive/bindings/receive_binding.dart';
+import '../modules/receive/views/receive_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.PREVIEW;
+  static const INITIAL = Routes.HOME;
 
   static final routes = [
     GetPage(
@@ -43,6 +47,16 @@ class AppPages {
       name: _Paths.PROFILE,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOME,
+      page: () => const HomeView(),
+      binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.RECEIVE,
+      page: () => const ReceiveView(),
+      binding: ReceiveBinding(),
     ),
   ];
 }

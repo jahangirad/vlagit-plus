@@ -2,41 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final TabController? tabController;
   final VoidCallback? onSettingsPressed;
-  final Widget? leading;
-  final Widget? actionIcon;
+  final VoidCallback? onEyePressed;
+  final Function(int)? onTabChanged;
 
   const CustomAppBar({
     super.key,
-    required this.title,
+    this.tabController,
     this.onSettingsPressed,
-    this.leading,
-    this.actionIcon,
+    this.onEyePressed,
+    this.onTabChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: const Color(0xFF130c1a),
-      elevation: 0,
-      leading: leading, // এখানে null পাঠালে ডিফল্ট ব্যাক বাটন আসবে (যদি থাকে)
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 18.sp,
+    return SafeArea(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 5.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0D0D0D).withOpacity(0.7),
+          borderRadius: BorderRadius.circular(30.r),
+          border: Border.all(color: Colors.white10),
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.visibility_outlined,
+                  color: const Color(0xFFc799ff), size: 24.sp),
+              onPressed: onEyePressed ?? () {},
+            ),
+            Expanded(
+              child: TabBar(
+                onTap: onTabChanged,
+                controller: tabController,
+                indicatorColor: Colors.transparent,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white38,
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                ),
+                tabs: const [
+                  Tab(text: 'Edit'),
+                  Tab(text: 'Preview'),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: onSettingsPressed ?? () {},
+              icon: Icon(Icons.settings_outlined,
+                  color: Colors.white70, size: 24.sp),
+            ),
+          ],
         ),
       ),
-      centerTitle: true,
-      actions: [
-        // actionIcon যদি null না হয় তবেই এটি লিস্টে যোগ হবে
-        if (actionIcon != null) actionIcon!,
-      ],
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
+  Size get preferredSize => Size.fromHeight(80.h);
 }

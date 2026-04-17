@@ -14,15 +14,6 @@ class NearbyView extends GetView<NearbyController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(
-        title: "Nearby",
-        leading: IconButton(
-            onPressed: (){
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back_ios, color: Color(0xFFc799ff), size: 22.sp)
-        ),
-      ),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
