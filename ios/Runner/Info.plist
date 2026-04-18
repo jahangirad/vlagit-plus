@@ -68,8 +68,13 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
     <string>This app needs camera access to scan QR codes</string>
-
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs photos access to get QR code from photo library</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app needs local network access to discover nearby devices and share profiles.</string>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_http._tcp</string>
+    </array>
 </dict>
 </plist>

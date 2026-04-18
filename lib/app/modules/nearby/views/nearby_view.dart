@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:vlagit_plus/app/global_widgets/appbar_widget.dart';
-import '../../../global_widgets/bottom_sheet_widget.dart';
 import '../../../global_widgets/button_widget.dart';
 import '../controllers/nearby_controller.dart';
 
@@ -69,7 +67,7 @@ class NearbyView extends GetView<NearbyController> {
                         SizedBox(width: 10.w),
                         Expanded(
                           child: Text(
-                            "Your device \"Orion-Pro\" is visible to everyone nearby",
+                            "Visible to everyone on the same network",
                             style: TextStyle(
                               color: Colors.white60,
                               fontSize: 13.sp,
@@ -84,20 +82,17 @@ class NearbyView extends GetView<NearbyController> {
 
               SizedBox(height: 20.h),
 
-              // Responsive Grid using responsive_grid package
+              // Responsive Grid showing dynamic devices
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: ResponsiveGridRow(
-                      children: [
-                        _buildResponsiveCard("Arjun", "https://img.freepik.com/free-photo/view-3d-man-holding-hands-pockets_23-2150709923.jpg"),
-                        _buildResponsiveCard("Sarah", "https://img.freepik.com/free-photo/view-3d-woman-holding-hands-pockets_23-2150709925.jpg"),
-                        _buildResponsiveCard("Alex", "https://img.freepik.com/free-photo/view-3d-man-holding-hands-pockets_23-2150709923.jpg"),
-                        _buildResponsiveCard("Jordan", "https://img.freepik.com/free-photo/view-3d-woman-holding-hands-pockets_23-2150709925.jpg"),
-                      ],
-                    ),
+                    child: Obx(() => ResponsiveGridRow(
+                      children: controller.devices.map((device) {
+                        return _buildResponsiveCard(device);
+                      }).toList(),
+                    )),
                   ),
                 ),
               ),
@@ -108,7 +103,7 @@ class NearbyView extends GetView<NearbyController> {
     );
   }
 
-  ResponsiveGridCol _buildResponsiveCard(String name, String imageUrl) {
+  ResponsiveGridCol _buildResponsiveCard(NearbyDevice device) {
     return ResponsiveGridCol(
       xs: 6,
       child: Container(
@@ -137,12 +132,15 @@ class NearbyView extends GetView<NearbyController> {
               child: CircleAvatar(
                 radius: 40.r,
                 backgroundColor: Colors.grey[900],
-                backgroundImage: NetworkImage(imageUrl),
+                child: Text(
+                  device.name.isNotEmpty ? device.name[0].toUpperCase() : "?",
+                  style: TextStyle(fontSize: 24.sp, color: Colors.white),
+                ),
               ),
             ),
             SizedBox(height: 10.h),
             Text(
-              name,
+              device.name,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.sp,
@@ -152,12 +150,12 @@ class NearbyView extends GetView<NearbyController> {
             SizedBox(height: 12.h),
             CustomButton(
               text: "SEND",
-              icon: Icons.play_arrow,
+              icon: Icons.send,
               height: 42.h,
               width: 120.w,
               color: const Color(0xFFC3A0FF),
               onPressed: () {
-                CustomBottomSheet.showUnlockProfile();
+                controller.sendDataToDevice(device);
               },
             ),
           ],

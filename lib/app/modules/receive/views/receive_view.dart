@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../global_widgets/bottom_sheet_widget.dart';
 import '../controllers/receive_controller.dart';
 
 class ReceiveView extends GetView<ReceiveController> {
@@ -15,7 +14,7 @@ class ReceiveView extends GetView<ReceiveController> {
           children: [
             SizedBox(height: 70.h),
             Text(
-              "Anonymous Viewers",
+              "Received Profiles",
               style: TextStyle(
                 color: const Color(0xFFC3A0FF),
                 fontSize: 32.sp,
@@ -26,7 +25,7 @@ class ReceiveView extends GetView<ReceiveController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40.w),
               child: Text(
-                "Who's checking out your profile? Unlock to reveal all secret visitors.",
+                "People who shared their profile with you on this network.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white60,
@@ -36,19 +35,20 @@ class ReceiveView extends GetView<ReceiveController> {
             ),
             SizedBox(height: 40.h),
             Expanded(
-              child: ListView.builder(
+              child: Obx(() => ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                itemCount: 5,
+                itemCount: controller.receivedList.length,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
+                  final profile = controller.receivedList[index];
                   return GestureDetector(
                     onTap: () {
-                      CustomBottomSheet.showUnlockProfile();
+                      _showProfileDetails(profile);
                     },
-                    child: _buildViewerCard(index),
+                    child: _buildViewerCard(profile),
                   );
                 },
-              ),
+              )),
             ),
           ],
         ),
@@ -56,8 +56,79 @@ class ReceiveView extends GetView<ReceiveController> {
     );
   }
 
-  Widget _buildViewerCard(int index) {
-    List<String> times = ["5M AGO", "12M AGO", "1H AGO", "3H AGO", "YESTERDAY"];
+  void _showProfileDetails(Map<String, dynamic> profile) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 50.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                profile['fullName'] ?? "No Name",
+                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                profile['title'] ?? "",
+                style: TextStyle(color: const Color(0xFFC3A0FF), fontSize: 16.sp),
+              ),
+              SizedBox(height: 20.h),
+              if (profile['note']?.isNotEmpty == true) ...[
+                Text("Note", style: TextStyle(color: Colors.white60, fontSize: 12.sp)),
+                Text(profile['note'], style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+                SizedBox(height: 15.h),
+              ],
+              _buildDetailItem(Icons.email, "Email", profile['email'], profile['isEmailActive']),
+              _buildDetailItem(Icons.language, "Website", profile['website'], profile['isWebsiteActive']),
+              _buildDetailItem(Icons.phone, "Phone", profile['phone'], profile['isPhoneActive']),
+              _buildDetailItem(Icons.link, "Social 1", profile['social'], profile['isSocialActive']),
+              _buildDetailItem(Icons.link, "Social 2", profile['social2'], profile['isSocial2Active']),
+              SizedBox(height: 30.h),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
+  Widget _buildDetailItem(IconData icon, String label, String? value, dynamic isActive) {
+    if (value == null || value.isEmpty || isActive == false) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: 15.h),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white38, size: 20.sp),
+          SizedBox(width: 15.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: TextStyle(color: Colors.white38, fontSize: 10.sp)),
+              Text(value, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewerCard(Map<String, dynamic> profile) {
     return Container(
       margin: EdgeInsets.only(bottom: 15.h),
       padding: EdgeInsets.all(20.r),
@@ -74,7 +145,7 @@ class ReceiveView extends GetView<ReceiveController> {
               color: Color(0xFF1A1A1A),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.visibility, color: Colors.white, size: 30.sp),
+            child: Icon(Icons.person, color: Colors.white, size: 30.sp),
           ),
           SizedBox(width: 15.w),
           Expanded(
@@ -82,7 +153,7 @@ class ReceiveView extends GetView<ReceiveController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "New vlag!",
+                  profile['fullName'] ?? "New User",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18.sp,
@@ -90,7 +161,7 @@ class ReceiveView extends GetView<ReceiveController> {
                   ),
                 ),
                 Text(
-                  "Someone just viewed you",
+                  profile['title'] ?? "Shared their profile",
                   style: TextStyle(
                     color: Colors.white38,
                     fontSize: 14.sp,
@@ -99,21 +170,7 @@ class ReceiveView extends GetView<ReceiveController> {
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                times[index],
-                style: TextStyle(
-                  color: const Color(0xFF4DB6AC),
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5.h),
-              Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14.sp),
-            ],
-          ),
+          Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14.sp),
         ],
       ),
     );
