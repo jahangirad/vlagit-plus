@@ -1,23 +1,29 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PreviewController extends GetxController {
-  //TODO: Implement PreviewController
+  final storage = GetStorage();
 
-  final count = 0.obs;
+  var fullName = ''.obs;
+  var title = ''.obs;
+  var note = ''.obs;
+  var imagePath = ''.obs;
+  var qrContent = 'Vlagit Plus'.obs;
+
   @override
   void onInit() {
     super.onInit();
+    loadPreviewData();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void loadPreviewData() {
+    fullName.value = storage.read('fullName') ?? 'Elena Vance';
+    title.value = storage.read('title') ?? 'Digital Architect';
+    note.value = storage.read('note') ?? '';
+    imagePath.value = storage.read('imagePath') ?? '';
+    qrContent.value = storage.read('qrContent') ?? 'Vlagit Plus';
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
+  
+  // Refresh data when the view is shown (if needed)
+  void refreshData() => loadPreviewData();
 }

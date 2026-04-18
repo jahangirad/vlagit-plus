@@ -28,16 +28,6 @@ class CustomBottomSheet {
             SizedBox(height: 25.h),
 
             Text(
-              "Sent Your Info",
-              style: TextStyle(
-                color: const Color(0xFFC3A0FF),
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 15.h),
-
-            Text(
               "Choose how you want to see who's\nchecking you out",
               textAlign: TextAlign.center,
               style: TextStyle(

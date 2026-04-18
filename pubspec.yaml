@@ -39,6 +39,8 @@ dependencies:
   responsive_grid: ^2.4.4
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.2.0
+  get_storage: ^2.1.1
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

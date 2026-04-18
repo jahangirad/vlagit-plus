@@ -57,9 +57,8 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             Obx(() {
-              // Show bottom nav only on Edit and Preview tabs
-              if (controller.currentIndex.value == 1 ||
-                  controller.currentIndex.value == 2) {
+              // Show bottom nav only on Preview tab
+              if (controller.currentIndex.value == 2) {
                 return const Positioned(
                   bottom: 0,
                   left: 0,
