@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,21 +17,22 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white70),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'Profile Preview',
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.sp,
+            color: const Color(0xFFC3A0FF),
+            fontSize: 18.sp,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(Icons.more_vert, color: Colors.white70),
             onPressed: () {},
           ),
         ],
@@ -40,177 +42,200 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+          gradient: RadialGradient(
+            center: Alignment(0, -0.5),
+            radius: 1.5,
             colors: [
-              Color(0xFF8E7AB5), // Lighter purple top
-              Color(0xFFF4F1F8), // Light grayish/white bottom
+              Color(0xFF1E0B36), // Deep Purple glow
+              Color(0xFF000000), // Solid Black
             ],
-            stops: [0.0, 0.4],
           ),
         ),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              SizedBox(height: 100.h),
-              // Profile Image with Verified Badge
+              SizedBox(height: 110.h),
+              
+              // Profile Image with Glow and Verified Badge
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(4.r),
-                    decoration: const BoxDecoration(
+                    padding: EdgeInsets.all(3.r),
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF7B61FF).withOpacity(0.3),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        )
+                      ],
+                      border: Border.all(color: Colors.white24, width: 1),
                     ),
                     child: CircleAvatar(
-                      radius: 70.r,
-                      backgroundColor: Colors.grey[300],
-                      // Note: Remote profile might not have a local file path for image
-                      // For now, using a placeholder icon. 
-                      // If you send image bytes, you'd handle it differently.
-                      child: Icon(Icons.person, size: 70.sp, color: Colors.grey),
+                      radius: 75.r,
+                      backgroundColor: Colors.grey[900],
+                      backgroundImage: profile['profileImage'] != null 
+                          ? MemoryImage(base64Decode(profile['profileImage']))
+                          : null,
+                      child: profile['profileImage'] == null 
+                          ? Icon(Icons.person, size: 70.sp, color: Colors.white24)
+                          : null,
                     ),
                   ),
                   Positioned(
-                    right: 10.w,
-                    bottom: 5.h,
+                    right: 8.w,
+                    bottom: 8.h,
                     child: Container(
                       padding: EdgeInsets.all(4.r),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1DB954), // Verified green
+                        color: const Color(0xFF00F5FF), // Cyan Verified
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: Colors.black, width: 2),
                       ),
                       child: Icon(
                         Icons.verified,
-                        size: 16.sp,
-                        color: Colors.white,
+                        size: 18.sp,
+                        color: Colors.black,
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20.h),
+              
+              SizedBox(height: 25.h),
+              
               // Name
               Text(
-                profile['fullName'] ?? "No Name",
+                profile['fullName'] ?? "Elena Vance",
                 style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 28.sp,
-                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  fontSize: 32.sp,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
                 ),
               ),
+              
               // Title
               Text(
-                (profile['title'] ?? "DESIGNER").toUpperCase(),
+                (profile['title'] ?? "Creative Director & Designer").toUpperCase(),
                 style: TextStyle(
-                  color: const Color(0xFF4A908A),
+                  color: const Color(0xFF00F5FF), // Cyan
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   letterSpacing: 2,
                 ),
               ),
-              SizedBox(height: 15.h),
-              // Note Card
+              
+              SizedBox(height: 25.h),
+              
+              // Bio/Note Card
               if (profile['note'] != null && profile['note'].toString().isNotEmpty)
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 40.w),
-                  padding: EdgeInsets.all(15.r),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20.r),
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(15.r),
+                    border: Border.all(color: Colors.white10),
                   ),
                   child: Text(
                     "\"${profile['note']}\"",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13.sp,
+                      color: Colors.white70,
+                      fontSize: 14.sp,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
               
-              SizedBox(height: 30.h),
+              SizedBox(height: 40.h),
               
-              // Contact Info Section
+              // Contact Section Label
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                padding: EdgeInsets.symmetric(horizontal: 35.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "CONTACT INFORMATION",
                       style: TextStyle(
-                        color: const Color(0xFF4A908A),
+                        color: const Color(0xFF00F5FF),
                         fontSize: 11.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
                       ),
                     ),
                     SizedBox(height: 8.h),
                     Text(
                       "Generated via secure encrypted profile sharing protocols.",
                       style: TextStyle(
-                        color: Colors.black45,
+                        color: Colors.white38,
                         fontSize: 12.sp,
+                        height: 1.5,
                       ),
                     ),
                   ],
                 ),
               ),
               
-              SizedBox(height: 20.h),
+              SizedBox(height: 25.h),
 
-              // Info Cards
-              _buildInfoCard(
-                icon: Icons.email,
+              // Info Cards (Obsidian Style)
+              _buildObsidianCard(
+                icon: Icons.email_rounded,
                 label: "EMAIL ADDRESS",
                 value: profile['email'],
                 isActive: profile['isEmailActive'],
-                iconColor: const Color(0xFF7B61FF),
-                iconBg: const Color(0xFFEBE7FF),
+                accentColor: const Color(0xFFC3A0FF),
               ),
-              _buildInfoCard(
-                icon: Icons.language,
+              _buildObsidianCard(
+                icon: Icons.language_rounded,
                 label: "WEBSITE",
                 value: profile['website'],
                 isActive: profile['isWebsiteActive'],
-                iconColor: const Color(0xFF4A908A),
-                iconBg: const Color(0xFFE8F4F3),
+                accentColor: const Color(0xFF00F5FF),
               ),
-              _buildInfoCard(
-                icon: Icons.phone,
+              _buildObsidianCard(
+                icon: Icons.phone_rounded,
                 label: "PHONE NUMBER",
                 value: profile['phone'],
                 isActive: profile['isPhoneActive'],
-                iconColor: const Color(0xFFFF6161),
-                iconBg: const Color(0xFFFFEAEA),
+                accentColor: const Color(0xFFFF7B7B),
               ),
-              _buildInfoCard(
-                icon: Icons.alternate_email,
-                label: "INSTAGRAM",
+              // Updated Social 1 as Facebook
+              _buildObsidianCard(
+                icon: Icons.facebook_rounded,
+                label: "FACEBOOK",
                 value: profile['social'],
                 isActive: profile['isSocialActive'],
-                iconColor: const Color(0xFFA161FF),
-                iconBg: const Color(0xFFF2EAFF),
+                accentColor: const Color(0xFF1877F2), // FB Blue
+              ),
+              // Updated Social 2 as Instagram
+              _buildObsidianCard(
+                icon: Icons.camera_alt_rounded, // Better Instagram icon representation
+                label: "INSTAGRAM",
+                value: profile['social2'],
+                isActive: profile['isSocial2Active'],
+                accentColor: const Color(0xFFE4405F), // IG Pink/Red
               ),
 
-              SizedBox(height: 40.h),
+              SizedBox(height: 50.h),
+              
+              // Footer
               Text(
                 "IDENTITY VERIFIED • ETHEREAL OBSIDIAN",
                 style: TextStyle(
-                  color: Colors.black26,
+                  color: Colors.white10,
                   fontSize: 10.sp,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
+                  letterSpacing: 2,
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 40.h),
             ],
           ),
         ),
@@ -218,61 +243,58 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _buildObsidianCard({
     required IconData icon,
     required String label,
     required String? value,
     required dynamic isActive,
-    required Color iconColor,
-    required Color iconBg,
+    required Color accentColor,
   }) {
     if (value == null || value.isEmpty || isActive == false) return const SizedBox.shrink();
     
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-      padding: EdgeInsets.all(15.r),
+      margin: EdgeInsets.symmetric(horizontal: 25.w, vertical: 8.h),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(30.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ],
+        color: const Color(0xFF121212),
+        borderRadius: BorderRadius.circular(25.r),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
-              color: iconBg,
+              color: Colors.white.withOpacity(0.05),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 20.sp),
+            child: Icon(icon, color: accentColor, size: 22.sp),
           ),
-          SizedBox(width: 15.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.black38,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
+          SizedBox(width: 20.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
                 ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
+                SizedBox(height: 2.h),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

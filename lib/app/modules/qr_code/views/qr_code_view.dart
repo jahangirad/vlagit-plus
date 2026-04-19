@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,8 +38,43 @@ class QrCodeView extends GetView<QrCodeController> {
             onDetect: (capture) {
               final List<Barcode> barcodes = capture.barcodes;
               for (final barcode in barcodes) {
-                debugPrint('Barcode found! ${barcode.rawValue}');
-                // স্ক্যান সফল হলে এখানে আপনার লজিক লিখুন (যেমন: Get.back(result: barcode.rawValue))
+                if (barcode.rawValue != null) {
+                  String rawData = barcode.rawValue!;
+                  try {
+                    // ১. প্রথমে JSON ডিকোড করার চেষ্টা
+                    final Map<String, dynamic> profileData = jsonDecode(rawData);
+                    Get.offNamed('/receive-profile', arguments: profileData);
+                    break; 
+                  } catch (e) {
+                    // ২. যদি JSON না হয়, তবে টেক্সট ফরম্যাট পার্স করার চেষ্টা (Fallback)
+                    Map<String, dynamic> profileData = {};
+                    List<String> lines = rawData.split("\n");
+                    
+                    for (var line in lines) {
+                      if (line.contains(": ")) {
+                        var parts = line.split(": ");
+                        String key = parts[0].toLowerCase().trim();
+                        String value = parts.sublist(1).join(": ").trim();
+                        
+                        if (key.contains("name")) profileData['fullName'] = value;
+                        if (key.contains("title")) profileData['title'] = value;
+                        if (key.contains("note")) profileData['note'] = value;
+                        if (key.contains("email")) { profileData['email'] = value; profileData['isEmailActive'] = true; }
+                        if (key.contains("website")) { profileData['website'] = value; profileData['isWebsiteActive'] = true; }
+                        if (key.contains("phone")) { profileData['phone'] = value; profileData['isPhoneActive'] = true; }
+                        if (key.contains("social 1")) { profileData['social'] = value; profileData['isSocialActive'] = true; }
+                        if (key.contains("social 2")) { profileData['social2'] = value; profileData['isSocial2Active'] = true; }
+                      }
+                    }
+
+                    if (profileData.containsKey('fullName')) {
+                      Get.offNamed('/receive-profile', arguments: profileData);
+                      break;
+                    } else {
+                      debugPrint('Invalid QR Content: $rawData');
+                    }
+                  }
+                }
               }
             },
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../routes/app_pages.dart';
+import '../modules/preview/controllers/preview_controller.dart';
 
 class CustomBottomNav extends StatelessWidget {
   const CustomBottomNav({super.key});
@@ -20,14 +21,18 @@ class CustomBottomNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildFooterItem(Icons.share_outlined, "Share", () {
-            // Share logic
+            // Find PreviewController and trigger share
+            if (Get.isRegistered<PreviewController>()) {
+              Get.find<PreviewController>().captureAndShare();
+            } else {
+              Get.snackbar("Notice", "Go to Preview to share your card.", 
+                backgroundColor: Colors.orange.withOpacity(0.7), colorText: Colors.white);
+            }
           }),
           _buildFooterItem(Icons.qr_code_scanner, "Scan", () {
-            // আলাদা পেজে নেভিগেট হবে
             Get.toNamed(Routes.QR_CODE);
           }),
           _buildFooterItem(Icons.near_me_outlined, "Nearby", () {
-            // আলাদা পেজে নেভিগেট হবে
             Get.toNamed(Routes.NEARBY);
           }),
         ],

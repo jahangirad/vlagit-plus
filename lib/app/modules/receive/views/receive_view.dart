@@ -41,13 +41,29 @@ class ReceiveView extends GetView<ReceiveController> {
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final profile = controller.receivedList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      _showViewAdBottomSheet(() {
-                        Get.toNamed('/receive-profile', arguments: profile);
-                      });
+                  return Dismissible(
+                    key: Key(profile['fullName'] + index.toString()),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 30.w),
+                      margin: EdgeInsets.only(bottom: 15.h),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(35.r),
+                      ),
+                      child: Icon(Icons.delete_sweep, color: Colors.redAccent, size: 28.sp),
+                    ),
+                    onDismissed: (direction) {
+                      controller.deleteProfile(index);
                     },
-                    child: _buildViewerCard(profile),
+                    child: GestureDetector(
+                      onTap: () {
+                        // Check if profile is already "unlocked" or just show ad
+                        controller.showAdAndOpenProfile(profile);
+                      },
+                      child: _buildViewerCard(profile),
+                    ),
                   );
                 },
               )),
@@ -58,100 +74,8 @@ class ReceiveView extends GetView<ReceiveController> {
     );
   }
 
-  void _showViewAdBottomSheet(VoidCallback onAdComplete) {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20.r),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Unlock Profile", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10.h),
-            Text("Watch a short ad to view the shared profile detail.", 
-              textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
-            SizedBox(height: 25.h),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFC3A0FF),
-                minimumSize: Size(double.infinity, 50.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-              ),
-              onPressed: () {
-                Get.back();
-                // Simulating Ad logic. You can integrate real Google Rewarded Ad here.
-                Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
-                Future.delayed(const Duration(seconds: 2), () {
-                  Get.back(); // Close loader
-                  onAdComplete(); // Show profile
-                });
-              },
-              child: const Text("Watch Ad & View", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: const Text("Maybe Later", style: TextStyle(color: Colors.white38)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showProfileDetails(Map<String, dynamic> profile) {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20.r),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Container(
-                  width: 50.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                profile['fullName'] ?? "No Name",
-                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                profile['title'] ?? "",
-                style: TextStyle(color: const Color(0xFFC3A0FF), fontSize: 16.sp),
-              ),
-              SizedBox(height: 20.h),
-              if (profile['note']?.isNotEmpty == true) ...[
-                Text("Note", style: TextStyle(color: Colors.white60, fontSize: 12.sp)),
-                Text(profile['note'], style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-                SizedBox(height: 15.h),
-              ],
-              _buildDetailItem(Icons.email, "Email", profile['email'], profile['isEmailActive']),
-              _buildDetailItem(Icons.language, "Website", profile['website'], profile['isWebsiteActive']),
-              _buildDetailItem(Icons.phone, "Phone", profile['phone'], profile['isPhoneActive']),
-              _buildDetailItem(Icons.link, "Social 1", profile['social'], profile['isSocialActive']),
-              _buildDetailItem(Icons.link, "Social 2", profile['social2'], profile['isSocial2Active']),
-              SizedBox(height: 30.h),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
+  // Removed old _showViewAdBottomSheet and _showProfileDetails methods as they are now handled in ReceiveController
+  // and ReceiveProfileView for a cleaner flow.
 
   Widget _buildDetailItem(IconData icon, String label, String? value, dynamic isActive) {
     if (value == null || value.isEmpty || isActive == false) return const SizedBox.shrink();

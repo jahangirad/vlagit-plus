@@ -110,8 +110,8 @@ class EditProfileView extends GetView<EditProfileController> {
                     _buildSwitchField("EMAIL ADDRESS", "e.g. elena.v@example.com", controller.emailController, controller.isEmailActive),
                     _buildSwitchField("WEBSITE URL", "e.g. www.elenavance.design", controller.websiteController, controller.isWebsiteActive),
                     _buildSwitchField("PHONE NUMBER", "e.g. +1 (555) 000-0000", controller.phoneController, controller.isPhoneActive),
-                    _buildSwitchField("SOCIAL MEDIA 1", "e.g. @username", controller.socialController, controller.isSocialActive),
-                    _buildSwitchField("SOCIAL MEDIA 2", "e.g. @username", controller.social2Controller, controller.isSocial2Active),
+                    _buildSwitchField("FACEBOOK", "e.g. @username", controller.socialController, controller.isSocialActive),
+                    _buildSwitchField("INSTAGRAM", "e.g. @username", controller.social2Controller, controller.isSocial2Active),
                   ],
                 )),
 

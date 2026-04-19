@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../edit_profile/controllers/edit_profile_controller.dart';
 
 class NearbyDevice {
@@ -28,6 +30,10 @@ class NearbyController extends GetxController {
   final int httpPort = 53354;
   Timer? _discoveryTimer;
   
+  // Ad variables
+  RewardedAd? _rewardedAd;
+  bool _isAdLoaded = false;
+  
   // Unique ID for this device session to avoid discovering itself
   final String _myId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -35,6 +41,28 @@ class NearbyController extends GetxController {
   void onInit() {
     super.onInit();
     startDiscovery();
+    _loadRewardedAd();
+  }
+
+  void _loadRewardedAd() {
+    String adUnitId = dotenv.get('ADMOB_REWARDED_UNIT_ID');
+    
+    RewardedAd.load(
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          _isAdLoaded = true;
+          print("Ad Loaded Successfully");
+        },
+        onAdFailedToLoad: (error) {
+          _isAdLoaded = false;
+          _rewardedAd = null;
+          print("Ad Failed to Load: $error");
+        },
+      ),
+    );
   }
 
   void startDiscovery() async {
@@ -193,7 +221,7 @@ class NearbyController extends GetxController {
           children: [
             Text("Limit Reached", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 10.h),
-            Text("You have reached your daily limit of 5 free sends. Watch a short ad to continue sharing!", 
+            Text("Watch a short ad to continue sharing!", 
               textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
             SizedBox(height: 25.h),
             ElevatedButton(
@@ -204,12 +232,29 @@ class NearbyController extends GetxController {
               ),
               onPressed: () {
                 Get.back();
-                // Simulating Ad logic for now. Integrate real Google Ad here.
-                Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
-                Future.delayed(const Duration(seconds: 3), () {
-                  Get.back(); // Close loader
-                  onAdComplete(); // Perform send
-                });
+                if (_isAdLoaded && _rewardedAd != null) {
+                  _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+                    onAdDismissedFullScreenContent: (ad) {
+                      ad.dispose();
+                      _isAdLoaded = false;
+                      _loadRewardedAd();
+                    },
+                    onAdFailedToShowFullScreenContent: (ad, error) {
+                      ad.dispose();
+                      _isAdLoaded = false;
+                      _loadRewardedAd();
+                      onAdComplete();
+                    },
+                  );
+                  _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+                    onAdComplete();
+                  });
+                } else {
+                  Get.snackbar("Notice", "Ad not ready, allowing send once.", 
+                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.orange, colorText: Colors.white);
+                  onAdComplete();
+                  _loadRewardedAd();
+                }
               },
               child: Text("Watch Ad & Continue", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
             ),

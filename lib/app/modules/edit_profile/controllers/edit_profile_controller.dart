@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,13 +37,18 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> pickImage() async {
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 200, // Optimized for QR code & mobile display
+      maxHeight: 200,
+      imageQuality: 70, // Balanced quality and size
+    );
     if (pickedFile != null) {
       imagePath.value = pickedFile.path;
     }
   }
 
-  void saveProfile() {
+  void saveProfile() async {
     // Save text fields
     storage.write('fullName', fullNameController.text);
     storage.write('title', titleController.text);
@@ -61,32 +67,44 @@ class EditProfileController extends GetxController {
     storage.write('isSocialActive', isSocialActive.value);
     storage.write('isSocial2Active', isSocial2Active.value);
 
-    // Generate QR Data string
-    List<String> qrLines = [];
+    // Image to Base64 for QR - We use a very small version for QR scanning stability
+    String? base64Image;
+    if (imagePath.value.isNotEmpty) {
+      try {
+        final File imageFile = File(imagePath.value);
+        final bytes = await imageFile.readAsBytes();
+        
+        // If the file is still large, we might need further compression 
+        // for QR stability. For now, we rely on image_picker's constraints.
+        // Base64 encoding increases size by ~33%
+        base64Image = base64Encode(bytes);
+        
+        // QR Code data limit is approx 3KB for many scanners to work reliably.
+        // If base64Image is too long, we might need to notify the user or auto-resize.
+      } catch (e) {
+        print("Error encoding image: $e");
+      }
+    }
+
+    // Generate Full JSON for QR
+    Map<String, dynamic> profileMap = {
+      'fullName': fullNameController.text,
+      'title': titleController.text,
+      'note': noteController.text,
+      'email': emailController.text,
+      'website': websiteController.text,
+      'phone': phoneController.text,
+      'social': socialController.text,
+      'social2': social2Controller.text,
+      'isEmailActive': isEmailActive.value,
+      'isWebsiteActive': isWebsiteActive.value,
+      'isPhoneActive': isPhoneActive.value,
+      'isSocialActive': isSocialActive.value,
+      'isSocial2Active': isSocial2Active.value,
+      'profileImage': base64Image,
+    };
     
-    // Always add these if not empty
-    if (fullNameController.text.trim().isNotEmpty) qrLines.add("Name: ${fullNameController.text.trim()}");
-    if (titleController.text.trim().isNotEmpty) qrLines.add("Title: ${titleController.text.trim()}");
-    if (noteController.text.trim().isNotEmpty) qrLines.add("Note: ${noteController.text.trim()}");
-
-    // Add these only if Switch is ON and Field is NOT EMPTY
-    if (isEmailActive.value && emailController.text.trim().isNotEmpty) {
-      qrLines.add("Email: ${emailController.text.trim()}");
-    }
-    if (isWebsiteActive.value && websiteController.text.trim().isNotEmpty) {
-      qrLines.add("Website: ${websiteController.text.trim()}");
-    }
-    if (isPhoneActive.value && phoneController.text.trim().isNotEmpty) {
-      qrLines.add("Phone: ${phoneController.text.trim()}");
-    }
-    if (isSocialActive.value && socialController.text.trim().isNotEmpty) {
-      qrLines.add("Social 1: ${socialController.text.trim()}");
-    }
-    if (isSocial2Active.value && social2Controller.text.trim().isNotEmpty) {
-      qrLines.add("Social 2: ${social2Controller.text.trim()}");
-    }
-
-    String qrData = qrLines.isNotEmpty ? qrLines.join("\n") : "No profile information shared.";
+    String qrData = jsonEncode(profileMap);
     storage.write('qrContent', qrData);
 
     // Update PreviewController in real-time
