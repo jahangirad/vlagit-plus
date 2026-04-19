@@ -9,6 +9,7 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const HOME = _Paths.HOME;
   static const RECEIVE = _Paths.RECEIVE;
+  static const RECEIVE_PROFILE = _Paths.RECEIVE_PROFILE;
 }
 
 abstract class _Paths {
@@ -20,4 +21,5 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const HOME = '/home';
   static const RECEIVE = '/receive';
+  static const RECEIVE_PROFILE = '/receive-profile';
 }

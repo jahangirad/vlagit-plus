@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../edit_profile/controllers/edit_profile_controller.dart';
 
 class NearbyDevice {
@@ -24,6 +27,9 @@ class NearbyController extends GetxController {
   final int udpPort = 53353;
   final int httpPort = 53354;
   Timer? _discoveryTimer;
+  
+  // Unique ID for this device session to avoid discovering itself
+  final String _myId = DateTime.now().millisecondsSinceEpoch.toString();
 
   @override
   void onInit() {
@@ -34,22 +40,32 @@ class NearbyController extends GetxController {
   void startDiscovery() async {
     devices.clear();
     try {
+      // Bind to any address but specific port
       _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, udpPort);
       _udpSocket?.broadcastEnabled = true;
+      _udpSocket?.multicastLoopback = false; // We don't want to hear ourselves
+      
+      print("UDP Socket bound to ${_udpSocket?.address.address}:${_udpSocket?.port}");
       
       _udpSocket?.listen((RawSocketEvent event) {
         if (event == RawSocketEvent.read) {
           Datagram? dg = _udpSocket?.receive();
           if (dg != null) {
             String message = utf8.decode(dg.data);
+            print("Received message: $message from ${dg.address.address}");
+            
             if (message.startsWith("VLAGIT_DISCOVERY:")) {
               var parts = message.split(":");
               if (parts.length >= 3) {
                 String name = parts[1];
                 String id = parts[2];
-                // basic check to avoid adding itself if we had a unique ID, 
-                // for now we just add based on IP
-                devices.add(NearbyDevice(name: name, ip: dg.address.address, deviceId: id));
+                
+                if (id != _myId) {
+                  print("Adding new device: $name (${dg.address.address})");
+                  devices.add(NearbyDevice(name: name, ip: dg.address.address, deviceId: id));
+                } else {
+                  print("Ignored own broadcast");
+                }
               }
             }
           }
@@ -65,16 +81,75 @@ class NearbyController extends GetxController {
     }
   }
 
-  void broadcastPresence() {
-    final editCtrl = Get.find<EditProfileController>();
-    String myName = editCtrl.fullNameController.text.isEmpty ? "Anonymous" : editCtrl.fullNameController.text;
-    String message = "VLAGIT_DISCOVERY:$myName:DEVICE_${Platform.operatingSystem}";
-    _udpSocket?.send(utf8.encode(message), InternetAddress("255.255.255.255"), udpPort);
+  void broadcastPresence() async {
+    try {
+      final editCtrl = Get.find<EditProfileController>();
+      String myName = editCtrl.fullNameController.text.isEmpty ? "Anonymous" : editCtrl.fullNameController.text;
+      String message = "VLAGIT_DISCOVERY:$myName:$_myId";
+      
+      print("Broadcasting presence: $message");
+      
+      // Send to general broadcast address
+      _udpSocket?.send(utf8.encode(message), InternetAddress("255.255.255.255"), udpPort);
+      
+      // Also try to send to subnet broadcast for all network interfaces
+      // This helps on some routers that block 255.255.255.255
+      try {
+        var interfaces = await NetworkInterface.list();
+        for (var interface in interfaces) {
+          for (var addr in interface.addresses) {
+            if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+              String ip = addr.address;
+              String subnet = ip.substring(0, ip.lastIndexOf('.'));
+              _udpSocket?.send(utf8.encode(message), InternetAddress("$subnet.255"), udpPort);
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore interface listing errors
+      }
+    } catch (e) {
+      print("Broadcast Error: $e");
+    }
   }
 
   Future<void> sendDataToDevice(NearbyDevice device) async {
+    final storage = GetStorage();
+    final now = DateTime.now();
+    
+    // Check send limits (Max 5 in 24 hours)
+    List sendHistory = storage.read('sendHistory') ?? [];
+    // Filter history to keep only last 24 hours
+    sendHistory = sendHistory.where((time) => 
+      now.difference(DateTime.parse(time)).inHours < 24
+    ).toList();
+    
+    if (sendHistory.length >= 5) {
+      // Show bottom sheet for Ad
+      _showAdBottomSheet(() async {
+        await _performSendData(device);
+        // Record the send action
+        sendHistory.add(now.toIso8601String());
+        storage.write('sendHistory', sendHistory);
+      });
+    } else {
+      await _performSendData(device);
+      // Record the send action
+      sendHistory.add(now.toIso8601String());
+      storage.write('sendHistory', sendHistory);
+    }
+  }
+
+  Future<void> _performSendData(NearbyDevice device) async {
     final editCtrl = Get.find<EditProfileController>();
     
+    // Convert image to Base64 if exists
+    String? base64Image;
+    if (editCtrl.imagePath.value.isNotEmpty) {
+      final bytes = await File(editCtrl.imagePath.value).readAsBytes();
+      base64Image = base64Encode(bytes);
+    }
+
     Map<String, dynamic> data = {
       'fullName': editCtrl.fullNameController.text,
       'title': editCtrl.titleController.text,
@@ -89,19 +164,63 @@ class NearbyController extends GetxController {
       'isPhoneActive': editCtrl.isPhoneActive.value,
       'isSocialActive': editCtrl.isSocialActive.value,
       'isSocial2Active': editCtrl.isSocial2Active.value,
+      'profileImage': base64Image, // Added image
     };
 
     try {
       var client = HttpClient();
-      client.connectionTimeout = const Duration(seconds: 5);
+      client.connectionTimeout = const Duration(seconds: 10);
       HttpClientRequest request = await client.post(device.ip, httpPort, '/receive');
       request.headers.contentType = ContentType.json;
       request.add(utf8.encode(jsonEncode(data)));
       await request.close();
-      Get.snackbar("Success", "Profile sent to ${device.name}", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar("Success", "Profile sent to ${device.name}", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
     } catch (e) {
-      Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
     }
+  }
+
+  void _showAdBottomSheet(VoidCallback onAdComplete) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Limit Reached", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10.h),
+            Text("You have reached your daily limit of 5 free sends. Watch a short ad to continue sharing!", 
+              textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
+            SizedBox(height: 25.h),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC3A0FF),
+                minimumSize: Size(double.infinity, 50.h),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+              ),
+              onPressed: () {
+                Get.back();
+                // Simulating Ad logic for now. Integrate real Google Ad here.
+                Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
+                Future.delayed(const Duration(seconds: 3), () {
+                  Get.back(); // Close loader
+                  onAdComplete(); // Perform send
+                });
+              },
+              child: Text("Watch Ad & Continue", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text("Cancel", style: TextStyle(color: Colors.white38)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override

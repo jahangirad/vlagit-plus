@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -6,7 +7,18 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("Could not load .env file");
+  }
+
   await GetStorage.init();
+  
+  // Note: Add 'import 'package:google_mobile_ads/google_mobile_ads.dart';' 
+  // and run 'MobileAds.instance.initialize();' here after adding the package.
+
   runApp(
     const MyApp()
   );

@@ -43,12 +43,57 @@ class ReceiveView extends GetView<ReceiveController> {
                   final profile = controller.receivedList[index];
                   return GestureDetector(
                     onTap: () {
-                      _showProfileDetails(profile);
+                      _showViewAdBottomSheet(() {
+                        Get.toNamed('/receive-profile', arguments: profile);
+                      });
                     },
                     child: _buildViewerCard(profile),
                   );
                 },
               )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showViewAdBottomSheet(VoidCallback onAdComplete) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Unlock Profile", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10.h),
+            Text("Watch a short ad to view the shared profile detail.", 
+              textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
+            SizedBox(height: 25.h),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC3A0FF),
+                minimumSize: Size(double.infinity, 50.h),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+              ),
+              onPressed: () {
+                Get.back();
+                // Simulating Ad logic. You can integrate real Google Rewarded Ad here.
+                Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+                Future.delayed(const Duration(seconds: 2), () {
+                  Get.back(); // Close loader
+                  onAdComplete(); // Show profile
+                });
+              },
+              child: const Text("Watch Ad & View", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+            TextButton(
+              onPressed: () => Get.back(),
+              child: const Text("Maybe Later", style: TextStyle(color: Colors.white38)),
             ),
           ],
         ),
@@ -145,7 +190,7 @@ class ReceiveView extends GetView<ReceiveController> {
               color: Color(0xFF1A1A1A),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.person, color: Colors.white, size: 30.sp),
+            child: Icon(Icons.visibility, color: Colors.white, size: 30.sp),
           ),
           SizedBox(width: 15.w),
           Expanded(

@@ -14,6 +14,8 @@ import '../modules/qr_code/bindings/qr_code_binding.dart';
 import '../modules/qr_code/views/qr_code_view.dart';
 import '../modules/receive/bindings/receive_binding.dart';
 import '../modules/receive/views/receive_view.dart';
+import '../modules/receive_profile/bindings/receive_profile_binding.dart';
+import '../modules/receive_profile/views/receive_profile_view.dart';
 
 part 'app_routes.dart';
 
@@ -57,6 +59,11 @@ class AppPages {
       name: _Paths.RECEIVE,
       page: () => const ReceiveView(),
       binding: ReceiveBinding(),
+    ),
+    GetPage(
+      name: _Paths.RECEIVE_PROFILE,
+      page: () => const ReceiveProfileView(),
+      binding: ReceiveProfileBinding(),
     ),
   ];
 }

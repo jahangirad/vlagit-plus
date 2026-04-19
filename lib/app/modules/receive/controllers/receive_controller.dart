@@ -21,8 +21,18 @@ class ReceiveController extends GetxController {
           String content = await utf8.decoder.bind(request).join();
           var data = jsonDecode(content);
           
-          // Add new data to the beginning of the list
-          receivedList.insert(0, Map<String, dynamic>.from(data));
+          // Use fullName or phone as a unique identifier to avoid duplicates
+          String identifier = data['fullName'] ?? 'Unknown';
+          
+          int existingIndex = receivedList.indexWhere((item) => item['fullName'] == identifier);
+          
+          if (existingIndex != -1) {
+            // Update existing entry
+            receivedList[existingIndex] = Map<String, dynamic>.from(data);
+          } else {
+            // Add new data to the beginning of the list
+            receivedList.insert(0, Map<String, dynamic>.from(data));
+          }
           
           request.response.statusCode = HttpStatus.ok;
           request.response.write("OK");
