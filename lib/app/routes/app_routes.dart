@@ -10,6 +10,8 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const RECEIVE = _Paths.RECEIVE;
   static const RECEIVE_PROFILE = _Paths.RECEIVE_PROFILE;
+  static const FAQ = _Paths.FAQ;
+  static const CONTACT_US = _Paths.CONTACT_US;
 }
 
 abstract class _Paths {
@@ -22,4 +24,6 @@ abstract class _Paths {
   static const HOME = '/home';
   static const RECEIVE = '/receive';
   static const RECEIVE_PROFILE = '/receive-profile';
+  static const FAQ = '/faq';
+  static const CONTACT_US = '/contact-us';
 }

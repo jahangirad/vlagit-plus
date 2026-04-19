@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:vlagit_plus/app/routes/app_pages.dart';
-import '../../../global_widgets/appbar_widget.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -33,10 +33,10 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10.h),
+                SizedBox(height: 90.h),
 
                 // 1. Profile Header Card
-                Container(
+                Obx(() => Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(25.r),
                   decoration: BoxDecoration(
@@ -53,9 +53,12 @@ class ProfileView extends GetView<ProfileController> {
                           CircleAvatar(
                             radius: 50.r,
                             backgroundColor: Colors.grey[900],
-                            backgroundImage: const NetworkImage(
-                              'https://img.freepik.com/free-photo/view-3d-man-holding-hands-pockets_23-2150709923.jpg',
-                            ),
+                            backgroundImage: controller.imagePath.value.isNotEmpty
+                                ? FileImage(File(controller.imagePath.value))
+                                : null,
+                            child: controller.imagePath.value.isEmpty
+                                ? Icon(Icons.person, size: 40.sp, color: Colors.white24)
+                                : null,
                           ),
                           Positioned(
                             right: 2.w,
@@ -66,7 +69,7 @@ class ProfileView extends GetView<ProfileController> {
                                 color: Color(0xFF00E5FF),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.check,
+                              child: Icon(Icons.verified,
                                   size: 14.sp, color: Colors.black),
                             ),
                           ),
@@ -78,7 +81,7 @@ class ProfileView extends GetView<ProfileController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Alex Rivera",
+                              controller.fullName.value,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 22.sp,
@@ -88,7 +91,7 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              "Vlagit Plus • Active",
+                              controller.title.value,
                               style: TextStyle(
                                 color: Colors.white60,
                                 fontSize: 14.sp,
@@ -100,34 +103,25 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ],
                   ),
-                ),
+                )),
 
                 SizedBox(height: 40.h),
 
-                // 2. General Settings Section
-                _buildSectionTitle("GENERAL SETTINGS"),
+                // 2. Support Section
+                _buildSectionTitle("SUPPORT & INFO"),
                 SizedBox(height: 15.h),
-                GestureDetector(
-                  onTap: (){
-                    Get.toNamed(Routes.EDIT_PROFILE);
-                  },
-                  child: _buildSettingItem(
-                    icon: Icons.person_outline,
-                    title: "Profile edit",
-                    subtitle: "Personal info, email, social",
-                  ),
+                _buildSettingItem(
+                  icon: Icons.help_outline_rounded,
+                  title: "FAQ",
+                  subtitle: "Commonly asked questions",
+                  onTap: () => Get.toNamed(Routes.FAQ),
                 ),
                 SizedBox(height: 15.h),
                 _buildSettingItem(
-                  icon: Icons.lock_outline,
-                  title: "Privacy",
-                  subtitle: "Security, visibility, blocked users",
-                ),
-                SizedBox(height: 15.h),
-                _buildSettingItem(
-                  icon: Icons.help_outline,
-                  title: "Help & Support",
-                  subtitle: "FAQ, contact us, feedback",
+                  icon: Icons.alternate_email_rounded,
+                  title: "Contact Us",
+                  subtitle: "Get in touch with our team",
+                  onTap: () => Get.toNamed(Routes.CONTACT_US),
                 ),
 
                 SizedBox(height: 60.h),
@@ -171,50 +165,54 @@ class ProfileView extends GetView<ProfileController> {
     required String title,
     required String subtitle,
     Widget? trailing,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(18.r),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0D0D0D).withOpacity(0.6),
-        borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 25.r,
-            backgroundColor: const Color(0xFF1A1A1A),
-            child: Icon(icon, color: const Color(0xFFC3A0FF), size: 24.sp),
-          ),
-          SizedBox(width: 15.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 13.sp,
-                  ),
-                ),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 15.h),
+        padding: EdgeInsets.all(18.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0D0D0D).withOpacity(0.6),
+          borderRadius: BorderRadius.circular(30.r),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 25.r,
+              backgroundColor: const Color(0xFF1A1A1A),
+              child: Icon(icon, color: const Color(0xFFC3A0FF), size: 24.sp),
             ),
-          ),
-          if (trailing != null) trailing,
-          SizedBox(width: 10.w),
-          Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16.sp),
-        ],
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 13.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null) trailing,
+            SizedBox(width: 10.w),
+            Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16.sp),
+          ],
+        ),
       ),
     );
   }
