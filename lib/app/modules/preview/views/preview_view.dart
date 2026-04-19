@@ -142,11 +142,30 @@ class PreviewView extends GetView<PreviewController> {
             width: 190.w,
             height: 190.w,
             padding: EdgeInsets.all(18.r),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(40.r)),
+            decoration: BoxDecoration(
+              color: Colors.white, 
+              borderRadius: BorderRadius.circular(40.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                )
+              ]
+            ),
             child: QrImageView(
-              data: controller.qrContent.value,
+              data: controller.qrContent.value.isEmpty ? "No Data" : controller.qrContent.value,
               version: QrVersions.auto,
               size: 150.0,
+              gapless: false,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Colors.black,
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: Colors.black,
+              ),
             ),
           ),
         ],

@@ -67,42 +67,47 @@ class EditProfileController extends GetxController {
     storage.write('isSocialActive', isSocialActive.value);
     storage.write('isSocial2Active', isSocial2Active.value);
 
-    // Image to Base64 for QR - We use a very small version for QR scanning stability
+    // Image to Base64 for QR - Optimized for QR stability
     String? base64Image;
     if (imagePath.value.isNotEmpty) {
       try {
         final File imageFile = File(imagePath.value);
         final bytes = await imageFile.readAsBytes();
         
-        // If the file is still large, we might need further compression 
-        // for QR stability. For now, we rely on image_picker's constraints.
-        // Base64 encoding increases size by ~33%
-        base64Image = base64Encode(bytes);
+        // Check if bytes size is acceptable for QR (roughly < 1.5 KB to keep total payload small)
+        if (bytes.length > 2048) {
+           print("Warning: Image too large for QR (${bytes.length} bytes). Scanner might fail.");
+        }
         
-        // QR Code data limit is approx 3KB for many scanners to work reliably.
-        // If base64Image is too long, we might need to notify the user or auto-resize.
+        base64Image = base64Encode(bytes);
       } catch (e) {
         print("Error encoding image: $e");
       }
     }
 
-    // Generate Full JSON for QR
+    // Generate Optimized JSON for QR (only include active fields to save space)
     Map<String, dynamic> profileMap = {
       'fullName': fullNameController.text,
       'title': titleController.text,
-      'note': noteController.text,
-      'email': emailController.text,
-      'website': websiteController.text,
-      'phone': phoneController.text,
-      'social': socialController.text,
-      'social2': social2Controller.text,
-      'isEmailActive': isEmailActive.value,
-      'isWebsiteActive': isWebsiteActive.value,
-      'isPhoneActive': isPhoneActive.value,
-      'isSocialActive': isSocialActive.value,
-      'isSocial2Active': isSocial2Active.value,
-      'profileImage': base64Image,
     };
+    
+    if (noteController.text.isNotEmpty) profileMap['note'] = noteController.text;
+    if (isEmailActive.value) profileMap['email'] = emailController.text;
+    if (isWebsiteActive.value) profileMap['website'] = websiteController.text;
+    if (isPhoneActive.value) profileMap['phone'] = phoneController.text;
+    if (isSocialActive.value) profileMap['social'] = socialController.text;
+    if (isSocial2Active.value) profileMap['social2'] = social2Controller.text;
+    
+    // Include flags for UI consistency in Receiver
+    profileMap['isEmailActive'] = isEmailActive.value;
+    profileMap['isWebsiteActive'] = isWebsiteActive.value;
+    profileMap['isPhoneActive'] = isPhoneActive.value;
+    profileMap['isSocialActive'] = isSocialActive.value;
+    profileMap['isSocial2Active'] = isSocial2Active.value;
+
+    // IMPORTANT: We do NOT include the profileImage in the QR code because 
+    // it makes the QR data too large to render or scan.
+    // The image is shared via the "Nearby" feature instead.
     
     String qrData = jsonEncode(profileMap);
     storage.write('qrContent', qrData);
