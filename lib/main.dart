@@ -36,6 +36,10 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: "Vlagit Plus",
+          theme: ThemeData(
+            fontFamily: 'SourceSerif4',
+            brightness: Brightness.dark,
+          ),
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
           defaultTransition: Transition.cupertino,

@@ -18,7 +18,7 @@ class ReceiveView extends GetView<ReceiveController> {
               style: TextStyle(
                 color: const Color(0xFFC3A0FF),
                 fontSize: 32.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600, // Matching SemiBold
               ),
             ),
             SizedBox(height: 10.h),
@@ -126,7 +126,7 @@ class ReceiveView extends GetView<ReceiveController> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600, // Matching SemiBold
                   ),
                 ),
                 Text(

@@ -20,17 +20,17 @@ class HomeBinding extends Bindings {
     Get.lazyPut<PreviewController>(
       () => PreviewController(),
     );
-    Get.lazyPut<QrCodeController>(
-      () => QrCodeController(),
-    );
+    // Get.lazyPut<QrCodeController>(
+    //   () => QrCodeController(),
+    // );
     Get.lazyPut<NearbyController>(
       () => NearbyController(),
     );
     Get.lazyPut<ReceiveController>(
       () => ReceiveController(),
     );
-    Get.lazyPut<ProfileController>(
-      () => ProfileController(),
-    );
+    // Get.lazyPut<ProfileController>(
+    //   () => ProfileController(),
+    // );
   }
 }

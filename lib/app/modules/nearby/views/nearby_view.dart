@@ -11,20 +11,9 @@ class NearbyView extends GetView<NearbyController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1A0033),
-              Colors.black,
-            ],
-            stops: [0.0, 0.4],
-          ),
-        ),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,10 +120,14 @@ class NearbyView extends GetView<NearbyController> {
               ),
               child: CircleAvatar(
                 radius: 40.r,
-                backgroundColor: Colors.grey[900],
+                backgroundColor: const Color(0xFF1A1A1A),
                 child: Text(
                   device.name.isNotEmpty ? device.name[0].toUpperCase() : "?",
-                  style: TextStyle(fontSize: 24.sp, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 32.sp, 
+                    color: const Color(0xFFC3A0FF),
+                    fontWeight: FontWeight.w600, // SemiBold for our font
+                  ),
                 ),
               ),
             ),

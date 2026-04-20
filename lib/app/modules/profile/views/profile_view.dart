@@ -11,21 +11,10 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1E0044), // Top purple glow
-              Colors.black,
-            ],
-            stops: [0.0, 0.4],
-          ),
-        ),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
@@ -33,90 +22,14 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 90.h),
-
-                // 1. Profile Header Card
-                Obx(() => Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(25.r),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D0D0D).withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(45.r),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
-                  ),
-                  child: Row(
-                    children: [
-                      // Profile Image with Verified Badge
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CircleAvatar(
-                            radius: 50.r,
-                            backgroundColor: Colors.grey[900],
-                            backgroundImage: controller.imagePath.value.isNotEmpty
-                                ? FileImage(File(controller.imagePath.value))
-                                : null,
-                            child: controller.imagePath.value.isEmpty
-                                ? Icon(Icons.person, size: 40.sp, color: Colors.white24)
-                                : null,
-                          ),
-                          Positioned(
-                            right: 2.w,
-                            bottom: 2.h,
-                            child: Container(
-                              padding: EdgeInsets.all(2.r),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF00E5FF),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.verified,
-                                  size: 14.sp, color: Colors.black),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 20.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              controller.fullName.value,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              controller.title.value,
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 14.sp,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-
-                SizedBox(height: 40.h),
-
-                // 2. Support Section
-                _buildSectionTitle("SUPPORT & INFO"),
-                SizedBox(height: 15.h),
+                SizedBox(height: 100.h),
                 _buildSettingItem(
                   icon: Icons.help_outline_rounded,
                   title: "FAQ",
                   subtitle: "Commonly asked questions",
                   onTap: () => Get.toNamed(Routes.FAQ),
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 10.h),
                 _buildSettingItem(
                   icon: Icons.alternate_email_rounded,
                   title: "Contact Us",
@@ -124,7 +37,7 @@ class ProfileView extends GetView<ProfileController> {
                   onTap: () => Get.toNamed(Routes.CONTACT_US),
                 ),
 
-                SizedBox(height: 60.h),
+                SizedBox(height: 120.h),
 
                 // 4. Version Info
                 Center(
@@ -146,18 +59,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Section Title Helper
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: const Color(0xFF4DB6AC),
-        fontSize: 12.sp,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 1.2,
-      ),
-    );
-  }
 
   // Setting Item Helper
   Widget _buildSettingItem({

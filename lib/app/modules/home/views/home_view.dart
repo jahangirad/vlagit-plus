@@ -17,14 +17,13 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+        gradient: RadialGradient(
+          center: Alignment(0, -0.5),
+          radius: 1.5,
           colors: [
-            Color(0xFF1E0044),
-            Colors.black,
+            Color(0xFF1E0B36),
+            Color(0xFF000000),
           ],
-          stops: [0.0, 0.5],
         ),
       ),
       child: Scaffold(

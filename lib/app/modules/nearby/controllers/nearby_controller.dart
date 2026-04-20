@@ -13,8 +13,9 @@ class NearbyDevice {
   final String name;
   final String ip;
   final String deviceId;
+  final String? base64Image;
 
-  NearbyDevice({required this.name, required this.ip, required this.deviceId});
+  NearbyDevice({required this.name, required this.ip, required this.deviceId, this.base64Image});
 
   @override
   bool operator ==(Object other) => other is NearbyDevice && other.ip == ip;
@@ -83,14 +84,15 @@ class NearbyController extends GetxController {
             print("Received message: $message from ${dg.address.address}");
             
             if (message.startsWith("VLAGIT_DISCOVERY:")) {
-              var parts = message.split(":");
+              var parts = message.split("|"); // Changed to pipe to avoid issues with colons in data
               if (parts.length >= 3) {
                 String name = parts[1];
                 String id = parts[2];
+                String? img = parts.length > 3 ? parts[3] : null;
                 
                 if (id != _myId) {
                   print("Adding new device: $name (${dg.address.address})");
-                  devices.add(NearbyDevice(name: name, ip: dg.address.address, deviceId: id));
+                  devices.add(NearbyDevice(name: name, ip: dg.address.address, deviceId: id, base64Image: img));
                 } else {
                   print("Ignored own broadcast");
                 }
@@ -113,7 +115,10 @@ class NearbyController extends GetxController {
     try {
       final editCtrl = Get.find<EditProfileController>();
       String myName = editCtrl.fullNameController.text.isEmpty ? "Anonymous" : editCtrl.fullNameController.text;
-      String message = "VLAGIT_DISCOVERY:$myName:$_myId";
+      
+      // We'll send name and ID. We won't send the full image via UDP as it's too large,
+      // but we could send a small thumbnail if needed. For now, let's just fix the discovery.
+      String message = "VLAGIT_DISCOVERY:|$myName|$_myId";
       
       print("Broadcasting presence: $message");
       
@@ -202,9 +207,9 @@ class NearbyController extends GetxController {
       request.headers.contentType = ContentType.json;
       request.add(utf8.encode(jsonEncode(data)));
       await request.close();
-      Get.snackbar("Success", "Profile sent to ${device.name}", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+      Get.snackbar("Success", "Profile sent to ${device.name}", snackPosition: SnackPosition.TOP, colorText: Colors.white);
     } catch (e) {
-      Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.TOP, colorText: Colors.white);
     }
   }
 

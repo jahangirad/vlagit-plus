@@ -105,9 +105,8 @@ class EditProfileController extends GetxController {
     profileMap['isSocialActive'] = isSocialActive.value;
     profileMap['isSocial2Active'] = isSocial2Active.value;
 
-    // IMPORTANT: We do NOT include the profileImage in the QR code because 
-    // it makes the QR data too large to render or scan.
-    // The image is shared via the "Nearby" feature instead.
+    // Image is EXCLUDED from QR to ensure high scannability.
+    // Nearby sharing still includes the image.
     
     String qrData = jsonEncode(profileMap);
     storage.write('qrContent', qrData);
@@ -120,9 +119,8 @@ class EditProfileController extends GetxController {
     Get.snackbar(
       "Success", 
       "Profile and QR Code updated!",
-      backgroundColor: Colors.green.withOpacity(0.7), 
       colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM
+      snackPosition: SnackPosition.TOP
     );
   }
 

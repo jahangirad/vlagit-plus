@@ -20,46 +20,32 @@ class PreviewView extends GetView<PreviewController> {
     precacheImage(const AssetImage('assets/apple-store.png'), context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1E0044), Colors.black],
-            stops: [0.0, 0.5],
-          ),
-        ),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              SizedBox(height: 100.h),
+              SizedBox(height: 60.h),
               
               Screenshot(
                 controller: screenshotController,
-                child: Container(
+                child: Obx(() => Container(
                   width: 340.w,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF2A005E),
-                        Color(0xFF120030),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(55.r),
-                    border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF6200EE).withOpacity(0.3),
-                        blurRadius: 40,
-                        offset: const Offset(0, 15),
-                      )
-                    ],
+                    gradient: controller.isSharing.value 
+                      ? const RadialGradient(
+                          center: Alignment(0, -0.5),
+                          radius: 1.5,
+                          colors: [
+                            Color(0xFF1E0B36),
+                            Color(0xFF000000),
+                          ],
+                        )
+                      : null,
+                    borderRadius: controller.isSharing.value ? BorderRadius.circular(55.r) : null,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -67,12 +53,10 @@ class PreviewView extends GetView<PreviewController> {
                       _buildProfileCard(context),
                       
                       // Condition-based rendering to keep the card compact when not sharing
-                      Obx(() => controller.isSharing.value 
-                        ? _buildShareFooter() 
-                        : SizedBox(height: 25.h)),
+                      if (controller.isSharing.value) _buildShareFooter() else SizedBox(height: 25.h),
                     ],
                   ),
-                ),
+                )),
               ),
               
               SizedBox(height: 120.h),
@@ -144,7 +128,7 @@ class PreviewView extends GetView<PreviewController> {
             padding: EdgeInsets.all(18.r),
             decoration: BoxDecoration(
               color: Colors.white, 
-              borderRadius: BorderRadius.circular(40.r),
+              borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),

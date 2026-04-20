@@ -76,12 +76,22 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                     ),
                     child: CircleAvatar(
                       radius: 75.r,
-                      backgroundColor: Colors.grey[900],
-                      backgroundImage: profile['profileImage'] != null 
+                      backgroundColor: const Color(0xFF1A1A1A),
+                      backgroundImage: (profile['profileImage'] != null && profile['profileImage'].toString().isNotEmpty)
                           ? MemoryImage(base64Decode(profile['profileImage']))
                           : null,
-                      child: profile['profileImage'] == null 
-                          ? Icon(Icons.person, size: 70.sp, color: Colors.white24)
+                      child: (profile['profileImage'] == null || profile['profileImage'].toString().isEmpty)
+                          ? Text(
+                              (profile['fullName'] != null && profile['fullName'].toString().isNotEmpty)
+                                  ? profile['fullName'].toString()[0].toUpperCase()
+                                  : "P",
+                              style: TextStyle(
+                                fontSize: 60.sp,
+                                color: const Color(0xFF00F5FF), // Matching Cyan accent
+                                fontWeight: FontWeight.w900,
+                                fontFamily: 'SourceSerif4',
+                              ),
+                            )
                           : null,
                     ),
                   ),
@@ -208,8 +218,8 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
               ),
               // Updated Social 1 as Facebook
               _buildObsidianCard(
-                icon: Icons.facebook_rounded,
-                label: "FACEBOOK",
+                icon: Icons.camera_alt_rounded,
+                label: "SOCIAL 1",
                 value: profile['social'],
                 isActive: profile['isSocialActive'],
                 accentColor: const Color(0xFF1877F2), // FB Blue
@@ -217,7 +227,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
               // Updated Social 2 as Instagram
               _buildObsidianCard(
                 icon: Icons.camera_alt_rounded, // Better Instagram icon representation
-                label: "INSTAGRAM",
+                label: "SOCIAL 2",
                 value: profile['social2'],
                 isActive: profile['isSocial2Active'],
                 accentColor: const Color(0xFFE4405F), // IG Pink/Red
