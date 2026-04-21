@@ -18,13 +18,13 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white70),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF4DB6AC)),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'Profile Preview',
           style: TextStyle(
-            color: const Color(0xFFC3A0FF),
+            color: const Color(0xFF00E5FF),
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
@@ -41,7 +41,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
             center: Alignment(0, -0.5),
             radius: 1.5,
             colors: [
-              Color(0xFF1E0B36), // Deep Purple glow
+              Color(0xFF001A1A), // Deep Cyan glow
               Color(0xFF000000), // Solid Black
             ],
           ),
@@ -62,7 +62,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7B61FF).withOpacity(0.3),
+                          color: const Color(0xFF00E5FF).withOpacity(0.3),
                           blurRadius: 30,
                           spreadRadius: 5,
                         )
@@ -82,7 +82,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                                   : "P",
                               style: TextStyle(
                                 fontSize: 60.sp,
-                                color: const Color(0xFF00F5FF), // Matching Cyan accent
+                                color: const Color(0xFF00E5FF), // Matching Cyan accent
                                 fontWeight: FontWeight.w900,
                                 fontFamily: 'SourceSerif4',
                               ),
@@ -195,7 +195,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                 label: "EMAIL ADDRESS",
                 value: profile['email'],
                 isActive: profile['isEmailActive'],
-                accentColor: const Color(0xFFC3A0FF),
+                accentColor: const Color(0xFF00E5FF),
               ),
               _buildObsidianCard(
                 icon: Icons.language_rounded,
@@ -209,7 +209,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                 label: "PHONE NUMBER",
                 value: profile['phone'],
                 isActive: profile['isPhoneActive'],
-                accentColor: const Color(0xFFFF7B7B),
+                accentColor: const Color(0xFF4DB6AC),
               ),
               // Updated Social 1 as Facebook
               _buildObsidianCard(
@@ -217,7 +217,7 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                 label: "SOCIAL 1",
                 value: profile['social'],
                 isActive: profile['isSocialActive'],
-                accentColor: const Color(0xFF1877F2), // FB Blue
+                accentColor: const Color(0xFF00E5FF),
               ),
               // Updated Social 2 as Instagram
               _buildObsidianCard(
@@ -225,21 +225,9 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
                 label: "SOCIAL 2",
                 value: profile['social2'],
                 isActive: profile['isSocial2Active'],
-                accentColor: const Color(0xFFE4405F), // IG Pink/Red
+                accentColor: const Color(0xFF4DB6AC),
               ),
 
-              SizedBox(height: 50.h),
-              
-              // Footer
-              Text(
-                "IDENTITY VERIFIED • ETHEREAL OBSIDIAN",
-                style: TextStyle(
-                  color: Colors.white10,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
               SizedBox(height: 40.h),
             ],
           ),

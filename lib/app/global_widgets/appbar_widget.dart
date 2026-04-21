@@ -32,6 +32,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: Obx(() {
           int currentIndex = homeController.currentIndex.value;
+          // Check if Edit (1) or Preview (2) is currently active
+          bool isTabActive = currentIndex == 1 || currentIndex == 2;
 
           return Row(
             children: [
@@ -53,14 +55,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   indicator: const BoxDecoration(), // Fully removes the indicator box
                   indicatorColor: Colors.transparent, 
                   dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
+                  // Dynamically change label color based on active state
+                  labelColor: isTabActive ? Colors.white : Colors.white24,
                   unselectedLabelColor: Colors.white24,
                   labelPadding: EdgeInsets.zero,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 16.sp,
-                    letterSpacing: 1.2,
-                  ),
+                  // Dynamically change label style to match unselected if tabs aren't active
+                  labelStyle: isTabActive 
+                    ? TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16.sp,
+                        letterSpacing: 1.2,
+                      )
+                    : TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15.sp,
+                      ),
                   unselectedLabelStyle: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 15.sp,
@@ -77,7 +86,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: onSettingsPressed ?? () {},
                 icon: Icon(
                   Icons.settings_outlined,
-                  color: currentIndex == 3 ? const Color(0xFFC3A0FF) : Colors.white24,
+                  color: currentIndex == 3 ? const Color(0xFF4DB6AC) : Colors.white24,
                   size: 24.sp,
                 ),
               ),

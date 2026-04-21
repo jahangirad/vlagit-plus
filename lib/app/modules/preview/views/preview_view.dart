@@ -118,19 +118,23 @@ class PreviewView extends GetView<PreviewController> {
           Text(
             controller.fullName.value,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: Colors.white, fontSize: 30.sp, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 6.h),
           Text(
             controller.title.value,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: Colors.white60, fontSize: 16.sp, fontWeight: FontWeight.w400),
           ),
           SizedBox(height: 40.h),
           Container(
-            width: 190.w,
-            height: 190.w,
-            padding: EdgeInsets.all(18.r),
+            width: 200.w,
+            height: 200.w,
+            padding: EdgeInsets.all(25.r),
             decoration: BoxDecoration(
               color: Colors.white, 
               borderRadius: BorderRadius.circular(20.r),
@@ -142,19 +146,47 @@ class PreviewView extends GetView<PreviewController> {
                 )
               ]
             ),
-            child: QrImageView(
-              data: controller.qrContent.value.isEmpty ? "No Data" : controller.qrContent.value,
-              version: QrVersions.auto,
-              size: 150.0,
-              gapless: false,
-              eyeStyle: const QrEyeStyle(
-                eyeShape: QrEyeShape.square,
-                color: Colors.black,
-              ),
-              dataModuleStyle: const QrDataModuleStyle(
-                dataModuleShape: QrDataModuleShape.square,
-                color: Colors.black,
-              ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                QrImageView(
+                  data: controller.qrContent.value.isEmpty ? "No Data" : controller.qrContent.value,
+                  version: QrVersions.auto,
+                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                  size: 200.0,
+                  gapless: false,
+                  eyeStyle: const QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: Colors.black,
+                  ),
+                  dataModuleStyle: const QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: Colors.black,
+                  ),
+                ),
+                // Center Round Logo Overlay
+                Container(
+                  width: 54.w,
+                  height: 54.w,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 44.w,
+                      height: 44.w,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage('assets/icon/icon.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

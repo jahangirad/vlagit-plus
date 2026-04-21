@@ -42,7 +42,7 @@ class ProfileView extends GetView<ProfileController> {
                 // 4. Version Info
                 Center(
                   child: Text(
-                    "VERSION 1.0.0 (MONOLITH)",
+                    "VERSION 1.0.0 (VLAGIT)",
                     style: TextStyle(
                       color: Colors.white24,
                       fontSize: 11.sp,

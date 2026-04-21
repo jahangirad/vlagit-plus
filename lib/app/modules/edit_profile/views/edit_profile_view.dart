@@ -56,7 +56,7 @@ class EditProfileView extends GetView<EditProfileController> {
                               onTap: () => controller.pickImage(),
                               child: CircleAvatar(
                                 radius: 18.r,
-                                backgroundColor: const Color(0xFFc799ff),
+                                backgroundColor: const Color(0xFF00E5FF),
                                 child: Icon(Icons.add,
                                     color: Colors.black, size: 20.sp),
                               ),
@@ -83,16 +83,16 @@ class EditProfileView extends GetView<EditProfileController> {
                 SizedBox(height: 20.h),
 
                 _buildLabel("Full Name"),
-                _buildTextField("e.g. Elena Vance", controller.fullNameController, maxLength: 120),
+                _buildTextField("e.g. Elena Vance", controller.fullNameController, maxLength: 40),
 
                 _buildLabel("Title"),
-                _buildTextField("e.g. Digital Architect", controller.titleController, maxLength: 200),
+                _buildTextField("e.g. Digital Architect", controller.titleController, maxLength: 60),
 
                 _buildLabel("Note"),
                 _buildTextField("Tell the world what you're up to...",
                     controller.noteController,
                     maxLines: 3,
-                    maxLength: 600),
+                    maxLength: 200),
 
                 SizedBox(height: 15.h),
 
@@ -110,6 +110,7 @@ class EditProfileView extends GetView<EditProfileController> {
 
                 CustomButton(
                   text: "SAVE CHANGES",
+                  color: const Color(0xFF4DB6AC),
                   onPressed: () => controller.saveProfile(),
                 ),
                 SizedBox(height: 50.h),
@@ -156,7 +157,7 @@ class EditProfileView extends GetView<EditProfileController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.r),
-          borderSide: const BorderSide(color: Color(0xFFc799ff), width: 1),
+          borderSide: const BorderSide(color: Color(0xFF4DB6AC), width: 1),
         ),
       ),
     );

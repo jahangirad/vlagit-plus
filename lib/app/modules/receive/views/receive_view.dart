@@ -13,23 +13,15 @@ class ReceiveView extends GetView<ReceiveController> {
         child: Column(
           children: [
             SizedBox(height: 70.h),
-            Text(
-              "Received Profiles",
-              style: TextStyle(
-                color: const Color(0xFFC3A0FF),
-                fontSize: 32.sp,
-                fontWeight: FontWeight.w600, // Matching SemiBold
-              ),
-            ),
-            SizedBox(height: 10.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40.w),
               child: Text(
-                "People who shared their profile with you on this network.",
+                "List of people who shared their profile with you locally on Vlagit",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white60,
-                  fontSize: 14.sp,
+                  color: const Color(0xFF00E5FF),
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -114,7 +106,7 @@ class ReceiveView extends GetView<ReceiveController> {
               color: Color(0xFF1A1A1A),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.visibility, color: Colors.white, size: 30.sp),
+            child: Icon(Icons.visibility, color: const Color(0xFF00E5FF), size: 30.sp),
           ),
           SizedBox(width: 15.w),
           Expanded(
@@ -139,7 +131,7 @@ class ReceiveView extends GetView<ReceiveController> {
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14.sp),
+          Icon(Icons.arrow_forward_ios, color: const Color(0xFF4DB6AC), size: 14.sp),
         ],
       ),
     );

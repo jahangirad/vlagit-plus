@@ -142,7 +142,7 @@ class NearbyView extends GetView<NearbyController> {
       xs: 6,
       child: Container(
         margin: EdgeInsets.all(8.r),
-        padding: EdgeInsets.symmetric(vertical: 20.h),
+        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
         decoration: BoxDecoration(
           color: const Color(0xFF0D0D0D),
           borderRadius: BorderRadius.circular(35.r),
@@ -157,7 +157,7 @@ class NearbyView extends GetView<NearbyController> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: const Color(0xFF00E5FF).withOpacity(0.1),
                     blurRadius: 10,
                     spreadRadius: 1,
                   )
@@ -170,7 +170,7 @@ class NearbyView extends GetView<NearbyController> {
                   device.name.isNotEmpty ? device.name[0].toUpperCase() : "?",
                   style: TextStyle(
                     fontSize: 32.sp, 
-                    color: const Color(0xFFC3A0FF),
+                    color: const Color(0xFF00E5FF),
                     fontWeight: FontWeight.w600, // SemiBold for our font
                   ),
                 ),
@@ -179,6 +179,9 @@ class NearbyView extends GetView<NearbyController> {
             SizedBox(height: 10.h),
             Text(
               device.name,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.sp,
@@ -191,7 +194,7 @@ class NearbyView extends GetView<NearbyController> {
               icon: Icons.send,
               height: 42.h,
               width: 120.w,
-              color: const Color(0xFFC3A0FF),
+              color: const Color(0xFF4DB6AC),
               onPressed: () {
                 controller.sendDataToDevice(device);
               },
