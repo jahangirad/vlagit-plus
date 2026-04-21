@@ -5,6 +5,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
+import '../../qr_code/controllers/qr_code_controller.dart';
 
 class PreviewController extends GetxController {
   final storage = GetStorage();
@@ -30,7 +31,15 @@ class PreviewController extends GetxController {
     fullName.value = storage.read('fullName') ?? 'Your Name';
     title.value = storage.read('title') ?? 'Your Title';
     imagePath.value = storage.read('imagePath') ?? '';
-    qrContent.value = storage.read('qrContent') ?? 'No Data';
+    
+    // Instead of reading old JSON from storage, generate fresh text payload
+    try {
+      final qrCtrl = Get.find<QrCodeController>();
+      qrContent.value = qrCtrl.generatePayload();
+    } catch (e) {
+      // Fallback if QrCodeController isn't initialized yet
+      qrContent.value = storage.read('qrContent') ?? 'No Data';
+    }
   }
 
   Future<void> captureAndShare() async {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controllers/receive_profile_controller.dart';
@@ -30,12 +31,6 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white70),
-            onPressed: () {},
-          ),
-        ],
       ),
       extendBodyBehindAppBar: true,
       body: Container(
@@ -262,51 +257,66 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
   }) {
     if (value == null || value.isEmpty || isActive == false) return const SizedBox.shrink();
     
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 25.w, vertical: 8.h),
-      padding: EdgeInsets.all(20.r),
-      decoration: BoxDecoration(
-        color: const Color(0xFF121212),
-        borderRadius: BorderRadius.circular(25.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              shape: BoxShape.circle,
+    return InkWell(
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: value));
+        Get.snackbar(
+          "Copied",
+          "$label copied to clipboard",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: accentColor.withOpacity(0.2),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 1),
+        );
+      },
+      borderRadius: BorderRadius.circular(25.r),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 25.w, vertical: 8.h),
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF121212),
+          borderRadius: BorderRadius.circular(25.r),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.r),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: accentColor, size: 22.sp),
             ),
-            child: Icon(icon, color: accentColor, size: 22.sp),
-          ),
-          SizedBox(width: 20.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
+            SizedBox(width: 20.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
                   ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                  SizedBox(height: 2.h),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Icon(Icons.copy_rounded, color: Colors.white10, size: 16.sp),
+          ],
+        ),
       ),
     );
   }

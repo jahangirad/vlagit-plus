@@ -17,7 +17,7 @@ class QrCodeView extends GetView<QrCodeController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Get.back(),
         ),
         title: Text(
@@ -35,21 +35,7 @@ class QrCodeView extends GetView<QrCodeController> {
           // Full screen scanner
           MobileScanner(
             controller: controller.scannerController,
-            onDetect: (capture) {
-              final List<Barcode> barcodes = capture.barcodes;
-              for (final barcode in barcodes) {
-                if (barcode.rawValue != null) {
-                  String rawData = barcode.rawValue!;
-                  try {
-                    final Map<String, dynamic> profileData = jsonDecode(rawData);
-                    Get.offNamed('/receive-profile', arguments: profileData);
-                    break; 
-                  } catch (e) {
-                    debugPrint('Invalid QR Content: $rawData');
-                  }
-                }
-              }
-            },
+            onDetect: controller.onScanSuccess,
           ),
 
           // স্ক্যানিং ওভারলে (ডার্ক মাস্ক এবং মাঝখানে স্বচ্ছ ফ্রেম)

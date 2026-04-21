@@ -11,8 +11,13 @@ class PreviewView extends GetView<PreviewController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.refreshData();
+    // controller.refreshData(); // Remove this from here to avoid the error
     final ScreenshotController screenshotController = controller.screenshotController;
+
+    // Use Future.microtask or addPostFrameCallback to refresh data safely after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshData();
+    });
 
     // Pre-cache brand assets to ensure they are ready for screenshot
     precacheImage(const AssetImage('assets/icon/icon.png'), context);

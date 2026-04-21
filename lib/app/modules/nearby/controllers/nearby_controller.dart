@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:collection/collection.dart'; // Added for firstWhereOrNull
 import '../../edit_profile/controllers/edit_profile_controller.dart';
 
 class NearbyDevice {
@@ -14,14 +15,21 @@ class NearbyDevice {
   final String ip;
   final String deviceId;
   final String? base64Image;
+  DateTime lastSeen; // Track when the device was last seen
 
-  NearbyDevice({required this.name, required this.ip, required this.deviceId, this.base64Image});
+  NearbyDevice({
+    required this.name, 
+    required this.ip, 
+    required this.deviceId, 
+    this.base64Image, 
+    required this.lastSeen,
+  });
 
   @override
-  bool operator ==(Object other) => other is NearbyDevice && other.ip == ip;
+  bool operator ==(Object other) => other is NearbyDevice && other.deviceId == deviceId;
 
   @override
-  int get hashCode => ip.hashCode;
+  int get hashCode => deviceId.hashCode;
 }
 
 class NearbyController extends GetxController {
@@ -30,6 +38,7 @@ class NearbyController extends GetxController {
   final int udpPort = 53353;
   final int httpPort = 53354;
   Timer? _discoveryTimer;
+  Timer? _cleanupTimer;
   
   // Ad variables
   RewardedAd? _rewardedAd;
@@ -43,6 +52,7 @@ class NearbyController extends GetxController {
     super.onInit();
     startDiscovery();
     _loadRewardedAd();
+    _startCleanupTimer();
   }
 
   void _loadRewardedAd() {
@@ -66,35 +76,54 @@ class NearbyController extends GetxController {
     );
   }
 
-  void startDiscovery() async {
+  void _startCleanupTimer() {
+    // Every 10 seconds, remove devices that haven't been seen for 10 seconds
+    _cleanupTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      final now = DateTime.now();
+      devices.removeWhere((device) => now.difference(device.lastSeen).inSeconds > 10);
+      devices.refresh();
+    });
+  }
+
+  void refreshDiscovery() {
     devices.clear();
+    broadcastPresence();
+  }
+
+  void startDiscovery() async {
     try {
-      // Bind to any address but specific port
       _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, udpPort);
       _udpSocket?.broadcastEnabled = true;
-      _udpSocket?.multicastLoopback = false; // We don't want to hear ourselves
-      
-      print("UDP Socket bound to ${_udpSocket?.address.address}:${_udpSocket?.port}");
+      _udpSocket?.multicastLoopback = false;
       
       _udpSocket?.listen((RawSocketEvent event) {
         if (event == RawSocketEvent.read) {
           Datagram? dg = _udpSocket?.receive();
           if (dg != null) {
             String message = utf8.decode(dg.data);
-            print("Received message: $message from ${dg.address.address}");
             
             if (message.startsWith("VLAGIT_DISCOVERY:")) {
-              var parts = message.split("|"); // Changed to pipe to avoid issues with colons in data
+              var parts = message.split("|");
               if (parts.length >= 3) {
                 String name = parts[1];
                 String id = parts[2];
                 String? img = parts.length > 3 ? parts[3] : null;
                 
                 if (id != _myId) {
-                  print("Adding new device: $name (${dg.address.address})");
-                  devices.add(NearbyDevice(name: name, ip: dg.address.address, deviceId: id, base64Image: img));
-                } else {
-                  print("Ignored own broadcast");
+                  // If device exists, update lastSeen, else add new
+                  var existing = devices.firstWhereOrNull((d) => d.deviceId == id);
+                  if (existing != null) {
+                    existing.lastSeen = DateTime.now();
+                    devices.refresh();
+                  } else {
+                    devices.add(NearbyDevice(
+                      name: name, 
+                      ip: dg.address.address, 
+                      deviceId: id, 
+                      base64Image: img,
+                      lastSeen: DateTime.now(),
+                    ));
+                  }
                 }
               }
             }
@@ -102,7 +131,6 @@ class NearbyController extends GetxController {
         }
       });
 
-      // Broadcast presence every 3 seconds
       _discoveryTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
         broadcastPresence();
       });
@@ -276,7 +304,9 @@ class NearbyController extends GetxController {
   @override
   void onClose() {
     _discoveryTimer?.cancel();
+    _cleanupTimer?.cancel(); // Added cleanup timer cancel
     _udpSocket?.close();
+    _rewardedAd?.dispose();
     super.onClose();
   }
 }

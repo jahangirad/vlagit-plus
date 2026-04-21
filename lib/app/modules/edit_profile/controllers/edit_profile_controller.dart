@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vlagit_plus/app/modules/qr_code/controllers/qr_code_controller.dart';
 import '../../preview/controllers/preview_controller.dart';
 
 class EditProfileController extends GetxController {
@@ -67,53 +68,29 @@ class EditProfileController extends GetxController {
     storage.write('isSocialActive', isSocialActive.value);
     storage.write('isSocial2Active', isSocial2Active.value);
 
-    // Image to Base64 for QR - Optimized for QR stability
-    String? base64Image;
-    if (imagePath.value.isNotEmpty) {
-      try {
-        final File imageFile = File(imagePath.value);
-        final bytes = await imageFile.readAsBytes();
-        
-        // Check if bytes size is acceptable for QR (roughly < 1.5 KB to keep total payload small)
-        if (bytes.length > 2048) {
-           print("Warning: Image too large for QR (${bytes.length} bytes). Scanner might fail.");
-        }
-        
-        base64Image = base64Encode(bytes);
-      } catch (e) {
-        print("Error encoding image: $e");
-      }
-    }
-
-    // Generate Optimized JSON for QR (only include active fields to save space)
-    Map<String, dynamic> profileMap = {
-      'fullName': fullNameController.text,
-      'title': titleController.text,
-    };
+    // Create Clean Text Payload for QR
+    StringBuffer sb = StringBuffer();
+    sb.writeln("--- VLAGIT PROFILE ---");
+    if (fullNameController.text.isNotEmpty) sb.writeln("Name: ${fullNameController.text}");
+    if (titleController.text.isNotEmpty) sb.writeln("Title: ${titleController.text}");
+    if (noteController.text.isNotEmpty) sb.writeln("Note: ${noteController.text}");
     
-    if (noteController.text.isNotEmpty) profileMap['note'] = noteController.text;
-    if (isEmailActive.value) profileMap['email'] = emailController.text;
-    if (isWebsiteActive.value) profileMap['website'] = websiteController.text;
-    if (isPhoneActive.value) profileMap['phone'] = phoneController.text;
-    if (isSocialActive.value) profileMap['social'] = socialController.text;
-    if (isSocial2Active.value) profileMap['social2'] = social2Controller.text;
+    if (isEmailActive.value && emailController.text.isNotEmpty) sb.writeln("Email: ${emailController.text}");
+    if (isPhoneActive.value && phoneController.text.isNotEmpty) sb.writeln("Phone: ${phoneController.text}");
+    if (isWebsiteActive.value && websiteController.text.isNotEmpty) sb.writeln("Web: ${websiteController.text}");
+    if (isSocialActive.value && socialController.text.isNotEmpty) sb.writeln("Social 1: ${socialController.text}");
+    if (isSocial2Active.value && social2Controller.text.isNotEmpty) sb.writeln("Social 2: ${social2Controller.text}");
     
-    // Include flags for UI consistency in Receiver
-    profileMap['isEmailActive'] = isEmailActive.value;
-    profileMap['isWebsiteActive'] = isWebsiteActive.value;
-    profileMap['isPhoneActive'] = isPhoneActive.value;
-    profileMap['isSocialActive'] = isSocialActive.value;
-    profileMap['isSocial2Active'] = isSocial2Active.value;
+    // Save the clean text to 'qrContent'
+    storage.write('qrContent', sb.toString());
 
-    // Image is EXCLUDED from QR to ensure high scannability.
-    // Nearby sharing still includes the image.
-    
-    String qrData = jsonEncode(profileMap);
-    storage.write('qrContent', qrData);
-
-    // Update PreviewController in real-time
+    // Update Controllers in real-time
     if (Get.isRegistered<PreviewController>()) {
       Get.find<PreviewController>().loadPreviewData();
+    }
+    if (Get.isRegistered<QrCodeController>()) {
+      // Regenerate the clean text QR
+      Get.find<QrCodeController>().update();
     }
 
     Get.snackbar(
