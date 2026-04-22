@@ -13,15 +13,16 @@ class ContactUsView extends GetView<ContactUsController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white70),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white70, size: 20),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'Contact Us',
           style: TextStyle(
-            color: const Color(0xFFC3A0FF),
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
+            color: const Color(0xFF00E5FF),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 2,
           ),
         ),
         centerTitle: true,
@@ -34,13 +35,14 @@ class ContactUsView extends GetView<ContactUsController> {
             center: Alignment(0, -0.5),
             radius: 1.5,
             colors: [
-              Color(0xFF1E0B36),
+              Color(0xFF0A0F1E),
               Color(0xFF000000),
             ],
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(25.r),
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -48,17 +50,18 @@ class ContactUsView extends GetView<ContactUsController> {
                 "How can we help you?",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'SourceSerif4',
                 ),
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 12.h),
               Text(
                 "If you have any questions, feedback, or need technical support, feel free to reach out to us through any of the channels below.",
                 style: TextStyle(
                   color: Colors.white60,
                   fontSize: 14.sp,
-                  height: 1.5,
+                  height: 1.6,
                 ),
               ),
               SizedBox(height: 40.h),
@@ -80,34 +83,18 @@ class ContactUsView extends GetView<ContactUsController> {
                 value: "@vlagit_official",
                 onTap: () {},
               ),
-              SizedBox(height: 40.h),
-              // Container(
-              //   padding: EdgeInsets.all(20.r),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white.withOpacity(0.03),
-              //     borderRadius: BorderRadius.circular(20.r),
-              //     border: Border.all(color: Colors.white10),
-              //   ),
-              //   child: Column(
-              //     children: [
-              //       Text(
-              //         "Business Inquiries",
-              //         style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold),
-              //       ),
-              //       SizedBox(height: 8.h),
-              //       Text(
-              //         "For partnership or business related queries, please contact our business team.",
-              //         textAlign: TextAlign.center,
-              //         style: TextStyle(color: Colors.white38, fontSize: 12.sp),
-              //       ),
-              //       SizedBox(height: 15.h),
-              //       Text(
-              //         "biz@vlagit.com",
-              //         style: TextStyle(color: const Color(0xFF00F5FF), fontSize: 14.sp, fontWeight: FontWeight.bold),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              SizedBox(height: 30.h),
+              Center(
+                child: Text(
+                  "WE USUALLY RESPOND WITHIN 24 HOURS",
+                  style: TextStyle(
+                    color: const Color(0xFF4DB6AC),
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -119,11 +106,11 @@ class ContactUsView extends GetView<ContactUsController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 15.h),
-        padding: EdgeInsets.all(20.r),
+        margin: EdgeInsets.only(bottom: 18.h),
+        padding: EdgeInsets.all(22.r),
         decoration: BoxDecoration(
-          color: const Color(0xFF121212),
-          borderRadius: BorderRadius.circular(20.r),
+          color: const Color(0xFF0D0D0D).withOpacity(0.6),
+          borderRadius: BorderRadius.circular(25.r),
           border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Row(
@@ -131,25 +118,29 @@ class ContactUsView extends GetView<ContactUsController> {
             Container(
               padding: EdgeInsets.all(12.r),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: const Color(0xFF00E5FF).withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: const Color(0xFFC3A0FF), size: 22.sp),
+              child: Icon(icon, color: const Color(0xFF00E5FF), size: 22.sp),
             ),
             SizedBox(width: 20.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.white38, fontSize: 11.sp, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  value,
-                  style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(color: Colors.white38, fontSize: 11.sp, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    value,
+                    style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
+            Icon(Icons.arrow_forward_ios_rounded, color: const Color(0xFF4DB6AC), size: 14.sp),
           ],
         ),
       ),

@@ -12,7 +12,7 @@ class ReceiveView extends GetView<ReceiveController> {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 70.h),
+            SizedBox(height: 80.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40.w),
               child: Text(
@@ -20,12 +20,13 @@ class ReceiveView extends GetView<ReceiveController> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color(0xFF00E5FF),
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
-            SizedBox(height: 40.h),
+            SizedBox(height: 30.h),
             Expanded(
               child: Obx(() => ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -41,17 +42,16 @@ class ReceiveView extends GetView<ReceiveController> {
                       padding: EdgeInsets.only(right: 30.w),
                       margin: EdgeInsets.only(bottom: 15.h),
                       decoration: BoxDecoration(
-                        color: Colors.redAccent.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(35.r),
+                        color: Colors.redAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(30.r),
                       ),
-                      child: Icon(Icons.delete_sweep, color: Colors.redAccent, size: 28.sp),
+                      child: Icon(Icons.delete_sweep_rounded, color: Colors.redAccent, size: 28.sp),
                     ),
                     onDismissed: (direction) {
                       controller.deleteProfile(index);
                     },
                     child: GestureDetector(
                       onTap: () {
-                        // Check if profile is already "unlocked" or just show ad
                         controller.showAdAndOpenProfile(profile);
                       },
                       child: _buildViewerCard(profile),
@@ -66,47 +66,24 @@ class ReceiveView extends GetView<ReceiveController> {
     );
   }
 
-  // Removed old _showViewAdBottomSheet and _showProfileDetails methods as they are now handled in ReceiveController
-  // and ReceiveProfileView for a cleaner flow.
-
-  Widget _buildDetailItem(IconData icon, String label, String? value, dynamic isActive) {
-    if (value == null || value.isEmpty || isActive == false) return const SizedBox.shrink();
-    return Padding(
-      padding: EdgeInsets.only(bottom: 15.h),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white38, size: 20.sp),
-          SizedBox(width: 15.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: TextStyle(color: Colors.white38, fontSize: 10.sp)),
-              Text(value, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildViewerCard(Map<String, dynamic> profile) {
     return Container(
       margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(20.r),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: const Color(0xFF0D0D0D).withOpacity(0.6),
-        borderRadius: BorderRadius.circular(35.r),
+        borderRadius: BorderRadius.circular(30.r),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10.r),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1A1A1A),
+            padding: EdgeInsets.all(12.r),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00E5FF).withOpacity(0.05),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.visibility, color: const Color(0xFF00E5FF), size: 30.sp),
+            child: Icon(Icons.visibility_outlined, color: const Color(0xFF00E5FF), size: 24.sp),
           ),
           SizedBox(width: 15.w),
           Expanded(
@@ -117,21 +94,22 @@ class ReceiveView extends GetView<ReceiveController> {
                   profile['fullName'] ?? "New User",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600, // Matching SemiBold
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: 2.h),
                 Text(
                   profile['title'] ?? "Shared their profile",
                   style: TextStyle(
                     color: Colors.white38,
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                   ),
                 ),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, color: const Color(0xFF4DB6AC), size: 14.sp),
+          Icon(Icons.arrow_forward_ios_rounded, color: const Color(0xFF4DB6AC), size: 14.sp),
         ],
       ),
     );

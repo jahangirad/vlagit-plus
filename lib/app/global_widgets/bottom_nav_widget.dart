@@ -46,7 +46,7 @@ class CustomBottomNav extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: const Color(0xFFc799ff), size: 26.sp),
+          Icon(icon, color: const Color(0xFF00E5FF), size: 26.sp),
           SizedBox(height: 4.h),
           Text(
             label,

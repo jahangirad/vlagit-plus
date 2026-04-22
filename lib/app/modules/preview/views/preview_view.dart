@@ -45,7 +45,7 @@ class PreviewView extends GetView<PreviewController> {
                           center: Alignment(0, -0.5),
                           radius: 1.5,
                           colors: [
-                            Color(0xFF1E0B36),
+                            Color(0xFF0A0F1E),
                             Color(0xFF000000),
                           ],
                         )
@@ -132,9 +132,9 @@ class PreviewView extends GetView<PreviewController> {
           ),
           SizedBox(height: 40.h),
           Container(
-            width: 200.w,
-            height: 200.w,
-            padding: EdgeInsets.all(25.r),
+            width: 220.w,
+            height: 220.w,
+            padding: EdgeInsets.all(12.r), // Reduced padding for larger QR
             decoration: BoxDecoration(
               color: Colors.white, 
               borderRadius: BorderRadius.circular(20.r),
@@ -152,8 +152,8 @@ class PreviewView extends GetView<PreviewController> {
                 QrImageView(
                   data: controller.qrContent.value.isEmpty ? "No Data" : controller.qrContent.value,
                   version: QrVersions.auto,
-                  errorCorrectionLevel: QrErrorCorrectLevel.H,
-                  size: 200.0,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M, // Changed to M for better scannability with logo
+                  size: 220.0,
                   gapless: false,
                   eyeStyle: const QrEyeStyle(
                     eyeShape: QrEyeShape.square,
@@ -164,18 +164,18 @@ class PreviewView extends GetView<PreviewController> {
                     color: Colors.black,
                   ),
                 ),
-                // Center Round Logo Overlay
+                // Smaller Center Round Logo
                 Container(
-                  width: 54.w,
-                  height: 54.w,
+                  width: 44.w,
+                  height: 44.w,
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Container(
-                      width: 44.w,
-                      height: 44.w,
+                      width: 34.w,
+                      height: 34.w,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
@@ -197,7 +197,7 @@ class PreviewView extends GetView<PreviewController> {
   Widget _buildShareFooter() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 30.h, horizontal: 25.w),
+      padding: EdgeInsets.symmetric(vertical: 35.h, horizontal: 20.w),
       decoration: BoxDecoration(
         color: const Color(0xFF050010),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(55.r)),
@@ -210,30 +210,39 @@ class PreviewView extends GetView<PreviewController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/icon/icon.png',
-                height: 35.h,
-                fit: BoxFit.contain,
+              // Logo with rounded background like in image
+              Container(
+                height: 32.h,
+                width: 32.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1B3022), // Subtle dark green background
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                padding: EdgeInsets.all(5.r),
+                child: Image.asset(
+                  'assets/icon/icon.png',
+                  fit: BoxFit.contain,
+                ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 15.w),
               Text(
                 "VLAGIT",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 26.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 4,
+                  letterSpacing: 5,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 35.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(child: _buildStoreButton('assets/play-store.png')),
+              _buildStoreButton('assets/play-store.png'),
               SizedBox(width: 15.w),
-              Expanded(child: _buildStoreButton('assets/apple-store.png')),
+              _buildStoreButton('assets/apple-store.png'),
             ],
           ),
         ],
@@ -243,12 +252,13 @@ class PreviewView extends GetView<PreviewController> {
 
   Widget _buildStoreButton(String imagePath) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-      height: 50.h,
+      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
+      height: 48.h, 
+      width: 140.w,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(15.r),
-        border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.2),
+        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.2),
       ),
       child: Image.asset(
         imagePath,

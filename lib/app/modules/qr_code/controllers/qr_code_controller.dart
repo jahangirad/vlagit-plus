@@ -193,7 +193,7 @@ class QrCodeController extends GetxController {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFC3A0FF),
+                          backgroundColor: const Color(0xFF4DB6AC),
                           foregroundColor: Colors.black,
                           minimumSize: Size(double.infinity, 55.h),
                           elevation: 0,
@@ -205,8 +205,8 @@ class QrCodeController extends GetxController {
                             "COPIED",
                             "Information saved to clipboard",
                             snackPosition: SnackPosition.TOP,
-                            backgroundColor: const Color(0xFFC3A0FF),
-                            colorText: Colors.black,
+                            backgroundColor: const Color(0xFF4DB6AC),
+                            colorText: Colors.white,
                             margin: EdgeInsets.all(20.r),
                             borderRadius: 15.r,
                           );

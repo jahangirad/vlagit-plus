@@ -83,7 +83,7 @@ class ProfileView extends GetView<ProfileController> {
             CircleAvatar(
               radius: 25.r,
               backgroundColor: const Color(0xFF1A1A1A),
-              child: Icon(icon, color: const Color(0xFFC3A0FF), size: 24.sp),
+              child: Icon(icon, color: const Color(0xFF00E5FF), size: 24.sp),
             ),
             SizedBox(width: 15.w),
             Expanded(
@@ -111,7 +111,7 @@ class ProfileView extends GetView<ProfileController> {
             ),
             if (trailing != null) trailing,
             SizedBox(width: 10.w),
-            Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16.sp),
+            Icon(Icons.arrow_forward_ios_rounded, color: const Color(0xFF4DB6AC), size: 14.sp),
           ],
         ),
       ),

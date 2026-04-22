@@ -21,7 +21,7 @@ class HomeView extends GetView<HomeController> {
           center: Alignment(0, -0.5),
           radius: 1.5,
           colors: [
-            Color(0xFF1E0B36),
+            Color(0xFF0A0F1E), // Deep Obsidian Blue/Black
             Color(0xFF000000),
           ],
         ),
