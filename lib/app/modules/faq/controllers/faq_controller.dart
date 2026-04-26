@@ -16,7 +16,7 @@ class FaqController extends GetxController {
     },
     {
       'question': 'Can I use Vlagit without internet?',
-      'answer': 'Profile sharing via local network and QR works without internet, but you will need a connection to load advertisements for unlocking profiles.'
+      'answer': 'Vlagit is fully offline operation - transfer profile over local Wi-Fi or LAN, no internet required. \nEnd-to-end TLS encryption - full confidentiality and integrity of your data Cross-platform compatibility - available on iOS and Android. \nNo tracking, no data collection.'
     },
   ].obs;
 }

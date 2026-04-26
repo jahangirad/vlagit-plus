@@ -8,6 +8,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:collection/collection.dart'; // Added for firstWhereOrNull
+import '../../../global_widgets/bottom_sheet_widget.dart';
+import '../../../global_widgets/button_widget.dart';
 import '../../edit_profile/controllers/edit_profile_controller.dart';
 
 class NearbyDevice {
@@ -242,62 +244,40 @@ class NearbyController extends GetxController {
   }
 
   void _showAdBottomSheet(VoidCallback onAdComplete) {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20.r),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Limit Reached", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10.h),
-            Text("Watch a short ad to continue sharing!", 
-              textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
-            SizedBox(height: 25.h),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFC3A0FF),
-                minimumSize: Size(double.infinity, 50.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-              ),
-              onPressed: () {
-                Get.back();
-                if (_isAdLoaded && _rewardedAd != null) {
-                  _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-                    onAdDismissedFullScreenContent: (ad) {
-                      ad.dispose();
-                      _isAdLoaded = false;
-                      _loadRewardedAd();
-                    },
-                    onAdFailedToShowFullScreenContent: (ad, error) {
-                      ad.dispose();
-                      _isAdLoaded = false;
-                      _loadRewardedAd();
-                      onAdComplete();
-                    },
-                  );
-                  _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-                    onAdComplete();
-                  });
-                } else {
-                  Get.snackbar("Notice", "Ad not ready, allowing send once.", 
-                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.orange, colorText: Colors.white);
-                  onAdComplete();
-                  _loadRewardedAd();
-                }
-              },
-              child: Text("Watch Ad & Continue", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text("Cancel", style: TextStyle(color: Colors.white38)),
-            ),
-          ],
-        ),
-      ),
+    CustomBottomSheet.showAdUnlock(
+      title: "Limit Reached",
+      description: "You have shared your profile 5 times in the last 24 hours. Watch a short ad to continue sharing!",
+      onAdClick: () {
+        Get.back();
+        if (_isAdLoaded && _rewardedAd != null) {
+          _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              _isAdLoaded = false;
+              _loadRewardedAd();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              _isAdLoaded = false;
+              _loadRewardedAd();
+              onAdComplete();
+            },
+          );
+          _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+            onAdComplete();
+          });
+        } else {
+          Get.snackbar(
+            "Notice", 
+            "Ad not ready, allowing send once.", 
+            snackPosition: SnackPosition.TOP, 
+            backgroundColor: Colors.white.withOpacity(0.1), 
+            colorText: Colors.white,
+          );
+          onAdComplete();
+          _loadRewardedAd();
+        }
+      },
     );
   }
 

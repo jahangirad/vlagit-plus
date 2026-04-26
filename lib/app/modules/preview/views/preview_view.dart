@@ -241,7 +241,7 @@ class PreviewView extends GetView<PreviewController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildStoreButton('assets/play-store.png'),
-              SizedBox(width: 15.w),
+              SizedBox(width: 10.w),
               _buildStoreButton('assets/apple-store.png'),
             ],
           ),
@@ -252,17 +252,20 @@ class PreviewView extends GetView<PreviewController> {
 
   Widget _buildStoreButton(String imagePath) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
-      height: 48.h, 
-      width: 140.w,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      height: 55.h,
+      width: 140.w, // Reduced to prevent overflow while keeping it wide
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(15.r),
         border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.2),
       ),
-      child: Image.asset(
-        imagePath,
-        fit: BoxFit.contain,
+      child: Center(
+        child: Image.asset(
+          imagePath,
+          height: 30.h, // Fixed height for both to ensure pixel-perfect alignment
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }

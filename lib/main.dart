@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       builder: (_, child){
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: "Vlagit Plus",
+          title: "Vlagit",
           theme: ThemeData(
             fontFamily: 'SourceSerif4',
             brightness: Brightness.dark,

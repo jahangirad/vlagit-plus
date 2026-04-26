@@ -29,11 +29,10 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? const Color(0xFF4DB6AC),
-          elevation: 10,
-          shadowColor: (color ?? const Color(0xFF4DB6AC)).withOpacity(0.3),
+          backgroundColor: color ?? const Color(0xFF4DB6AC), // Teal Solid
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.r),
+            borderRadius: BorderRadius.circular(20.r),
           ),
         ),
         child: Row(
@@ -47,8 +46,9 @@ class CustomButton extends StatelessWidget {
               text,
               style: TextStyle(
                 color: textColor ?? Colors.black,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 fontSize: 16.sp,
+                letterSpacing: 0.5,
               ),
             ),
           ],

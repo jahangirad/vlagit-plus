@@ -11,68 +11,94 @@ class NearbyView extends GetView<NearbyController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white70, size: 20),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          "NEARBY DISCOVERY",
+          style: TextStyle(
+            color: const Color(0xFF00E5FF),
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 2,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Container(
         width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.5),
+            radius: 1.5,
+            colors: [
+              Color(0xFF0A0F1E),
+              Color(0xFF000000),
+            ],
+          ),
+        ),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with Refresh Button
+              // Info Banner
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "DISCOVERY ACTIVE",
-                          style: TextStyle(
-                            color: const Color(0xFF00E5FF),
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            _buildAnimatedPulse(),
+                            SizedBox(width: 10.w),
+                            Text(
+                              "DISCOVERY ACTIVE",
+                              style: TextStyle(
+                                color: const Color(0xFF4DB6AC),
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
                         ),
                         IconButton(
                           onPressed: () => controller.refreshDiscovery(),
-                          icon: Icon(Icons.refresh_rounded, color: const Color(0xFF00E5FF), size: 24.sp),
+                          icon: Icon(Icons.refresh_rounded, color: const Color(0xFF00E5FF), size: 22.sp),
                           tooltip: "Refresh List",
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.h),
                     Text(
-                      "Searching for devices...",
+                      "Nearby Devices",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 26.sp,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'SourceSerif4',
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    Row(
-                      children: [
-                        _buildAnimatedPulse(),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: Text(
-                            "Visible to everyone on the same network",
-                            style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        ),
-                      ],
+                    SizedBox(height: 5.h),
+                    Text(
+                      "Visible to everyone on the same network",
+                      style: TextStyle(
+                        color: Colors.white38,
+                        fontSize: 13.sp,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
 
               // Responsive Grid showing dynamic devices
               Expanded(

@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../global_widgets/bottom_sheet_widget.dart';
 
 class ReceiveController extends GetxController {
   final storage = GetStorage();
@@ -68,62 +68,36 @@ class ReceiveController extends GetxController {
   }
 
   void showAdAndOpenProfile(Map<String, dynamic> profile) {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20.r),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Unlock Profile", style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10.h),
-            Text("Watch a short ad to view the full profile details.", 
-              textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 14.sp)),
-            SizedBox(height: 25.h),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFC3A0FF),
-                minimumSize: Size(double.infinity, 50.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-              ),
-              onPressed: () {
-                Get.back(); // Close bottom sheet
-                if (isAdLoaded && _rewardedAd != null) {
-                  _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-                    onAdDismissedFullScreenContent: (ad) {
-                      ad.dispose();
-                      isAdLoaded = false;
-                      _loadRewardedAd();
-                      Get.toNamed('/receive-profile', arguments: profile);
-                    },
-                    onAdFailedToShowFullScreenContent: (ad, error) {
-                      ad.dispose();
-                      isAdLoaded = false;
-                      _loadRewardedAd();
-                      Get.toNamed('/receive-profile', arguments: profile);
-                    },
-                  );
-                  _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-                    // Reward handled in onAdDismissed
-                  });
-                } else {
-                  // Fallback if ad not ready
-                  Get.toNamed('/receive-profile', arguments: profile);
-                  _loadRewardedAd();
-                }
-              },
-              child: Text("Watch Ad to View", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text("Cancel", style: TextStyle(color: Colors.white38)),
-            ),
-          ],
-        ),
-      ),
+    CustomBottomSheet.showAdUnlock(
+      title: "Unlock Profile",
+      description: "Watch a short ad to view the full profile details shared with you.",
+      buttonText: "Watch Ad to View",
+      onAdClick: () {
+        Get.back(); // Close bottom sheet
+        if (isAdLoaded && _rewardedAd != null) {
+          _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              isAdLoaded = false;
+              _loadRewardedAd();
+              Get.toNamed('/receive-profile', arguments: profile);
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              isAdLoaded = false;
+              _loadRewardedAd();
+              Get.toNamed('/receive-profile', arguments: profile);
+            },
+          );
+          _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+            // Reward handled in onAdDismissed
+          });
+        } else {
+          // Fallback if ad not ready
+          Get.toNamed('/receive-profile', arguments: profile);
+          _loadRewardedAd();
+        }
+      },
     );
   }
 
