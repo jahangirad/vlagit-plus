@@ -14,12 +14,13 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  MobileAds.instance.initialize();
+  // Await the initialization of Mobile Ads
+  await MobileAds.instance.initialize();
   
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    print("Could not load .env file");
+    debugPrint("Could not load .env file: $e");
   }
 
   await GetStorage.init();
@@ -55,4 +56,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
