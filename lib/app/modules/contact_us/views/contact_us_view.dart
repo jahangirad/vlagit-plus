@@ -69,19 +69,19 @@ class ContactUsView extends GetView<ContactUsController> {
                 icon: Icons.email_outlined,
                 title: "Email Support",
                 value: "support@vlagit.com",
-                onTap: () {},
+                onTap: () => controller.launchEmail(),
               ),
               _buildContactCard(
                 icon: Icons.language_outlined,
                 title: "Official Website",
                 value: "www.vlagit.com",
-                onTap: () {},
+                onTap: () => controller.launchWebsite(),
               ),
               _buildContactCard(
                 icon: Icons.telegram_outlined,
                 title: "Telegram",
                 value: "@vlagit_official",
-                onTap: () {},
+                onTap: () => controller.launchTelegram(),
               ),
               SizedBox(height: 30.h),
               Center(

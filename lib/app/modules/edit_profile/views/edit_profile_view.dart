@@ -13,7 +13,7 @@ class EditProfileView extends GetView<EditProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: SafeArea(
@@ -71,7 +71,7 @@ class EditProfileView extends GetView<EditProfileController> {
                           "CHANGE AVATAR",
                           style: TextStyle(
                             color: const Color(0xFF4DB6AC),
-                            fontWeight: FontWeight.w600, // SemiBold
+                            fontWeight: FontWeight.w600,
                             fontSize: 14.sp,
                           ),
                         ),
@@ -130,7 +130,7 @@ class EditProfileView extends GetView<EditProfileController> {
         style: TextStyle(
           color: const Color(0xFF4DB6AC),
           fontSize: 11.sp,
-          fontWeight: FontWeight.w600, // SemiBold
+          fontWeight: FontWeight.w600,
           letterSpacing: 1.2,
         ),
       ),
@@ -142,7 +142,9 @@ class EditProfileView extends GetView<EditProfileController> {
       controller: textController,
       maxLines: maxLines,
       maxLength: maxLength,
-      maxLengthEnforcement: MaxLengthEnforcement.enforced, // Strictly block extra characters
+      cursorColor: const Color(0xFF00E5FF), // Cursor Color added
+      cursorWidth: 2.0,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
       style: TextStyle(color: Colors.white, fontSize: 14.sp),
       decoration: InputDecoration(
         hintText: hint,
@@ -188,6 +190,7 @@ class EditProfileView extends GetView<EditProfileController> {
               Expanded(
                 child: TextField(
                   controller: textController,
+                  cursorColor: const Color(0xFF00E5FF), // Cursor Color added
                   style: TextStyle(color: Colors.white70, fontSize: 13.sp),
                   decoration: InputDecoration(
                     hintText: hint,

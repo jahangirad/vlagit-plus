@@ -23,11 +23,19 @@ class NearbyView extends GetView<NearbyController> {
           "NEARBY DISCOVERY",
           style: TextStyle(
             color: const Color(0xFF00E5FF),
-            fontSize: 14.sp,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => controller.refreshDiscovery(),
+            icon: Icon(Icons.refresh_rounded, color: const Color(0xFF00E5FF), size: 24.sp),
+            tooltip: "Refresh List",
+          ),
+          SizedBox(width: 10.w),
+        ],
         centerTitle: true,
       ),
       body: Container(
@@ -44,63 +52,9 @@ class NearbyView extends GetView<NearbyController> {
         ),
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Info Banner
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            _buildAnimatedPulse(),
-                            SizedBox(width: 10.w),
-                            Text(
-                              "DISCOVERY ACTIVE",
-                              style: TextStyle(
-                                color: const Color(0xFF4DB6AC),
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          onPressed: () => controller.refreshDiscovery(),
-                          icon: Icon(Icons.refresh_rounded, color: const Color(0xFF00E5FF), size: 22.sp),
-                          tooltip: "Refresh List",
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Nearby Devices",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26.sp,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'SourceSerif4',
-                      ),
-                    ),
-                    SizedBox(height: 5.h),
-                    Text(
-                      "Visible to everyone on the same network",
-                      style: TextStyle(
-                        color: Colors.white38,
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 10.h),
-
-              // Responsive Grid showing dynamic devices
+              SizedBox(height: 20.h),
+              // Simplified UI - Only Grid
               Expanded(
                 child: Obx(() => controller.devices.isEmpty 
                   ? _buildEmptyState()
@@ -124,24 +78,6 @@ class NearbyView extends GetView<NearbyController> {
     );
   }
 
-  Widget _buildAnimatedPulse() {
-    return Container(
-      width: 8.w,
-      height: 8.w,
-      decoration: const BoxDecoration(
-        color: Color(0xFF00E5FF),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFF00E5FF),
-            blurRadius: 10,
-            spreadRadius: 2,
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -150,13 +86,8 @@ class NearbyView extends GetView<NearbyController> {
           Icon(Icons.wifi_find_rounded, size: 80.sp, color: Colors.white10),
           SizedBox(height: 20.h),
           Text(
-            "No devices found yet",
+            "Searching for nearby users...",
             style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-          ),
-          SizedBox(height: 10.h),
-          Text(
-            "Ensure others are on the same Wi-Fi",
-            style: TextStyle(color: Colors.white10, fontSize: 12.sp),
           ),
         ],
       ),
@@ -197,7 +128,7 @@ class NearbyView extends GetView<NearbyController> {
                   style: TextStyle(
                     fontSize: 32.sp, 
                     color: const Color(0xFF00E5FF),
-                    fontWeight: FontWeight.w600, // SemiBold for our font
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
