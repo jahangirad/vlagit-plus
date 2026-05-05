@@ -104,6 +104,7 @@ class ReceiveController extends GetxController {
   void startServer() async {
     try {
       _server = await HttpServer.bind(InternetAddress.anyIPv4, httpPort);
+      print("Receive Server started on port $httpPort");
       _server?.listen((HttpRequest request) async {
         if (request.uri.path == '/receive' && request.method == 'POST') {
           String content = await utf8.decoder.bind(request).join();

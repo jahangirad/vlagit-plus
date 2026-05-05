@@ -110,7 +110,13 @@ class EditProfileController extends GetxController {
     phoneController.text = storage.read('phone') ?? '';
     socialController.text = storage.read('social') ?? '';
     social2Controller.text = storage.read('social2') ?? '';
-    imagePath.value = storage.read('imagePath') ?? '';
+    
+    String savedPath = storage.read('imagePath') ?? '';
+    if (savedPath.isNotEmpty && File(savedPath).existsSync()) {
+      imagePath.value = savedPath;
+    } else {
+      imagePath.value = '';
+    }
 
     isEmailActive.value = storage.read('isEmailActive') ?? false;
     isWebsiteActive.value = storage.read('isWebsiteActive') ?? false;

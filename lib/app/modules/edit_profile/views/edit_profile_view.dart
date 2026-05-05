@@ -37,16 +37,25 @@ class EditProfileView extends GetView<EditProfileController> {
                                   color: const Color(0xFF00E5FF).withOpacity(0.5),
                                   width: 2),
                             ),
-                            child: Obx(() => CircleAvatar(
-                                  radius: 60.r,
-                                  backgroundColor: const Color(0xFF1A1A1A),
-                                  backgroundImage: controller.imagePath.value.isNotEmpty
-                                      ? FileImage(File(controller.imagePath.value))
-                                      : null,
-                                  child: controller.imagePath.value.isEmpty
-                                      ? Icon(Icons.person,
-                                          size: 60.sp, color: Colors.white24)
-                                      : null,
+                            child: Obx(() => Container(
+                                  width: 120.r,
+                                  height: 120.r,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFF1A1A1A),
+                                  ),
+                                  child: ClipOval(
+                                    child: controller.imagePath.value.isNotEmpty && File(controller.imagePath.value).existsSync()
+                                        ? Image.file(
+                                            File(controller.imagePath.value),
+                                            key: ValueKey(controller.imagePath.value),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Icon(Icons.person, size: 60.sp, color: Colors.white24);
+                                            },
+                                          )
+                                        : Icon(Icons.person, size: 60.sp, color: Colors.white24),
+                                  ),
                                 )),
                           ),
                           Positioned(

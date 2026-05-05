@@ -113,24 +113,34 @@ class ReceiveProfileView extends GetView<ReceiveProfileController> {
               SizedBox(height: 25.h),
               
               // Name
-              Text(
-                profile['fullName'] ?? "Elena Vance",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.w),
+                child: Text(
+                  profile['fullName'] ?? "Elena Vance",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28.sp, // Slightly adjusted for better wrapping
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ),
               
+              SizedBox(height: 5.h),
+
               // Title
-              Text(
-                (profile['title'] ?? "Creative Director & Designer").toUpperCase(),
-                style: TextStyle(
-                  color: const Color(0xFF00F5FF), // Cyan
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                child: Text(
+                  (profile['title'] ?? "Creative Director & Designer").toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: const Color(0xFF00F5FF), // Cyan
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2, // Reduced slightly for long titles
+                  ),
                 ),
               ),
               

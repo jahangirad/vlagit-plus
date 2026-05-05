@@ -92,15 +92,25 @@ class PreviewView extends GetView<PreviewController> {
                     )
                   ],
                 ),
-                child: CircleAvatar(
-                  radius: 65.r,
-                  backgroundColor: Colors.grey[900],
-                  backgroundImage: controller.imagePath.value.isNotEmpty
-                      ? FileImage(File(controller.imagePath.value))
-                      : null,
-                  child: controller.imagePath.value.isEmpty
-                      ? Icon(Icons.person, size: 65.sp, color: Colors.white24)
-                      : null,
+                child: Container(
+                  width: 130.r,
+                  height: 130.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[900],
+                  ),
+                  child: ClipOval(
+                    child: controller.imagePath.value.isNotEmpty && File(controller.imagePath.value).existsSync()
+                        ? Image.file(
+                            File(controller.imagePath.value),
+                            key: ValueKey(controller.imagePath.value),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.person, size: 65.sp, color: Colors.white24);
+                            },
+                          )
+                        : Icon(Icons.person, size: 65.sp, color: Colors.white24),
+                  ),
                 ),
               ),
               Positioned(
@@ -118,17 +128,23 @@ class PreviewView extends GetView<PreviewController> {
           Text(
             controller.fullName.value,
             textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.white, fontSize: 30.sp, fontWeight: FontWeight.bold),
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 30.sp,
+                fontWeight: FontWeight.bold
+            ),
           ),
           SizedBox(height: 6.h),
           Text(
             controller.title.value,
             textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.white60, fontSize: 16.sp, fontWeight: FontWeight.w400),
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.white60,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400
+            ),
           ),
           SizedBox(height: 40.h),
           Container(

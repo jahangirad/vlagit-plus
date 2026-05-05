@@ -97,6 +97,7 @@ class NearbyController extends GetxController {
       _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, udpPort);
       _udpSocket?.broadcastEnabled = true;
       _udpSocket?.multicastLoopback = false;
+      print("UDP Discovery started on port $udpPort");
       
       _udpSocket?.listen((RawSocketEvent event) {
         if (event == RawSocketEvent.read) {
@@ -109,7 +110,9 @@ class NearbyController extends GetxController {
               if (parts.length >= 3) {
                 String name = parts[1];
                 String id = parts[2];
-                String? img = parts.length > 3 ? parts[3] : null;
+                // Check if port is provided in message, otherwise use default
+                int devicePort = parts.length > 3 ? (int.tryParse(parts[3]) ?? httpPort) : httpPort;
+                String? img = parts.length > 4 ? parts[4] : null;
                 
                 if (id != _myId) {
                   // If device exists, update lastSeen, else add new
@@ -146,9 +149,8 @@ class NearbyController extends GetxController {
       final editCtrl = Get.find<EditProfileController>();
       String myName = editCtrl.fullNameController.text.isEmpty ? "Anonymous" : editCtrl.fullNameController.text;
       
-      // We'll send name and ID. We won't send the full image via UDP as it's too large,
-      // but we could send a small thumbnail if needed. For now, let's just fix the discovery.
-      String message = "VLAGIT_DISCOVERY:|$myName|$_myId";
+      // We'll send name, ID, and the HTTP port we're listening on
+      String message = "VLAGIT_DISCOVERY:|$myName|$_myId|$httpPort";
       
       print("Broadcasting presence: $message");
       
@@ -233,11 +235,22 @@ class NearbyController extends GetxController {
     try {
       var client = HttpClient();
       client.connectionTimeout = const Duration(seconds: 10);
+      
+      // Make sure we are using the correct IP and Port
+      print("Attempting to connect to ${device.ip}:$httpPort");
+      
       HttpClientRequest request = await client.post(device.ip, httpPort, '/receive');
       request.headers.contentType = ContentType.json;
       request.add(utf8.encode(jsonEncode(data)));
       await request.close();
       Get.snackbar("Success", "Profile sent to ${device.name}", snackPosition: SnackPosition.TOP, colorText: Colors.white);
+    } on SocketException catch (e) {
+      if (e.osError?.errorCode == 111 || e.osError?.errorCode == 10061) {
+        Get.snackbar("Error", "Target device refused connection. Make sure the other user has the 'Receive' screen open.", 
+          snackPosition: SnackPosition.TOP, colorText: Colors.white, backgroundColor: Colors.red.withOpacity(0.5));
+      } else {
+        Get.snackbar("Error", "Network Error: ${e.message}", snackPosition: SnackPosition.TOP, colorText: Colors.white);
+      }
     } catch (e) {
       Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.TOP, colorText: Colors.white);
     }
